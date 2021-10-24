@@ -40,3 +40,15 @@ int indexOf(char* query,char** table,int c){
     }
     return -1;
 }
+
+/**
+ * fonction permettant dest = src
+*/
+void strset(char* dest,char* src){
+    int i = 0;
+    while(src[i] != '\0'){
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = '\0';
+}
