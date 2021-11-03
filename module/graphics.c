@@ -159,20 +159,20 @@ screen gen_game(screen current){
 			if(t2 - t1 = 1000){
 								/*si atente d'une seconde, le bloque tombe, modification de la grille*/
 				t1 = t2;
-			}else if(){
+			}/*else if(){*/
 								/*descente accélérée*/	
-			}
+			/*}*/
 			/*if(MLV_wait_keyboards_or_milliseconds()avec un temps de 10ms != valeur si rien)*/
 			/*vérifier que le coup est valide et le faire le cas échéant*/
-			if(){				/*si flèche gauche, mouvement à gauche*/
+			/*if(){*/			/*si flèche gauche, mouvement à gauche*/
 				
-			}else if(){			/*si flèche droite, mouvement à droite*/
+			/*}else if(){*/			/*si flèche droite, mouvement à droite*/
 				
-			}else if(){			/*si boutton -, rotation à -90°, pas possible si une seule matrice*/
+			/*}else if(){*/			/*si boutton -, rotation à -90°, pas possible si une seule matrice*/
 				
-			}else if(){			/*si boutton +, rotation à 90°, pas possible si une seule matrice*/
+			/*}else if(){*/			/*si boutton +, rotation à 90°, pas possible si une seule matrice*/
 				
-			}
+			/*}*/
 			/*à la fin de chaque while, vérifier que le bloque n'est pas déscendu en bas sinon return 1*/
 		}
 		/*le bloque est déscendu en bas, appel fonction pour vérif si ligne complète et donc effacer*/
