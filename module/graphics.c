@@ -1,6 +1,7 @@
 #include <MLV/MLV_all.h>
 #include "../header/api.h"
 #include "../header/const.h"
+#include "../header/game.h"
 
 
 void prompt(screen cur,char* message,int display_time){
