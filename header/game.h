@@ -50,3 +50,7 @@ void next_turn(game g);
  * Initialise le jeu
 */
 game init_game(game g);
+
+/*vérifie si le jeu est fini*/
+
+int est_fini(game g);
