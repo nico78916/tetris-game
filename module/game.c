@@ -192,8 +192,53 @@ int est_fini(game g){
     for(i=0;i<NB_COLS;i++){
         if(grid[0][i]!=0){
             return 1;       /*Si return 1 alors il y a un bloque sur la première ligne, le jeu est fini*/
-        }else{
-            return 0;
         }
     }
+    return 0;
 }
+
+int verif_sienbas(game g){
+    int i, j;
+    figure grid;
+    grid game->grid;
+    for(i=1;i<NB_LIGNES;i++){
+        for(j=1;j<NN_COLS;j++){
+            if(grid[i][j] == 1 && grid[i-1][j] != 0 && grid[i-1][j] != 1){
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int verif_lignecomplete(game g){				/*pour chaque ligne, vérifie si la première valeur de la ligne est 1*/
+    int i, j = 0, k, verif[NB_LIGNES]={0};		/*si elle vaut 1 alors ça check toute les valeurs de la ligne*/
+    figure grid;								/*j fait le count et compte le nombre d'itération de 1*/
+    grid game->grid;							/*si j est égal au NB_COLS, alors toute la ligne vaut 1*/
+    for(i=0;i<NB_LIGNES;i++){
+        if(grid[i][j]==1){
+            for(k=0;k<NB_COLS;k++){
+                if(grid[i][k]==1){
+                    j++;
+                }
+            }
+        if(j==NB_COLS){
+            verif[i]=1;
+        }
+        j = 0;
+    }
+		return verif;
+}
+
+int verif_jeufini(game g){
+	int i;
+	figure grid;
+	grid game->grid;
+	for(i=0;i<NB_COLS;i++){
+		if(grid[0][i]==1){
+			return 1;
+		}
+	}
+	return 0;
+}
+
