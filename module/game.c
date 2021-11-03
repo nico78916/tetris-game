@@ -184,3 +184,16 @@ game init_game(game g){
     }
     return g;
 }
+
+int est_fini(game g){
+    int i;
+    figure grid;
+    grid game->grid
+    for(i=0;i<NB_COLS;i++){
+        if(grid[0][i]!=0){
+            return 1;       /*Si return 1 alors il y a un bloque sur la première ligne, le jeu est fini*/
+        }else{
+            return 0;
+        }
+    }
+}
