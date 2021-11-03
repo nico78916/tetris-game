@@ -15,26 +15,30 @@ module du jeu permettant d'interagir avec l'utilisateur
 
 
 api : fonction print et indexOf
+
 const : résolution
+
 game : fonction d'utilisation des bloques
-	initialisation										ok
-	génération de bloques								ok
-	gauche droite										ok
-	rotation horaire et anti-horaire					ok
-	déscente déscente_accélérée							à faire
-	générérer bloques sur l'écran						à faire
-	fonction pour gérer la descente						à faire
-	actualiser image pendant la descente				à faire
+
+	initialisation						ok
+	génération de bloques					ok
+	gauche droite						ok
+	rotation horaire et anti-horaire			ok
+	déscente déscente_accélérée				à faire
+	générérer bloques sur l'écran				à faire
+	fonction pour gérer la descente				à faire
+	actualiser image pendant la descente			à faire
 	fonction pour vérif si le bloque a atteind le bas	à faire
-	fonction de vérif si une ligne est complète			à faire
+	fonction de vérif si une ligne est complète		à faire
 	fonction pour suppr une ligne si ligne complète		à faire
 	fonction pour vérif si le coup est réalisable		à faire
-	fonction pour vérifier si le jeu est finit			à faire
-	fonction score										à faire
-	fonction pause										à faire
+	fonction pour vérifier si le jeu est finit		à faire
+	fonction score						à faire
+	fonction pause						à faire
 	fonciton pour terminer le jeu si il est finit		à faire
     
 graphics : fenêtres avec MLV
+
 	fenêtre menu
 		fenêtre nouvelle partie
 			fenêtre 1 joueur
@@ -56,17 +60,20 @@ graphics : fenêtres avec MLV
 		boutton quitter
 
 save : fonction pour sauvegarde
-		créer une sauvegarde							à faire
-		vérifier les slots disponibles					à faire
-		choix du slot									à faire
-		écriture dans le fichier de sauvegarde			ok
+
+		créer une sauvegarde				à faire
+		vérifier les slots disponibles			à faire
+		choix du slot					à faire
+		écriture dans le fichier de sauvegarde		ok
 		vérif si fichier de sauvegarde vide ou utilisé	à faire
-		écraser fichier de sauvegarde déjà utilisé		à faire
-		récupérer une sauvegarde						ok
-		lancer une sauvegarde							à faire
+		écraser fichier de sauvegarde déjà utilisé	à faire
+		récupérer une sauvegarde			ok
+		lancer une sauvegarde				à faire
 
 string : manipulation de chaine
+
 update : fonction click
+
 		fonction de de prise en compte du clic
 		fonction de vérif validité clic
 		
