@@ -152,12 +152,12 @@ screen gen_game(screen current){
 	int t1 = SDL_GetTicks(), t2, finw = 0;				/*penser à ajouter time.h*/
     while(est_fini == 0){								/*boucle du jeu*/
         figure figure;
-        figure game->figures;
+        figure = game->figures;
         gen_block(figure.blocks);						/*génère le bloque*/
         /*ajouter un appel de fonction mlv qui matérialise le block*/
 		while(finw == 0){								/*boucle qui fait tomber le bloque et attend les instructions*/
 			t2 = SDL_GetTicks();
-			if(t2 - t1 = 1000){
+			if(t2 - t1 == 1000){
 								/*si atente d'une seconde, le bloque tombe, modification de la grille*/
 				t1 = t2;
 			}/*else if(){*/
