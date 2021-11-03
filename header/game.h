@@ -54,3 +54,15 @@ game init_game(game g);
 /*vérifie si le jeu est fini*/
 
 int est_fini(game g);
+
+/*vérifie si le bloque est arrivé en bas*/
+
+int verif_sienbas(game g);
+
+/*vérifie si une ligne est complète*/
+
+int verif_lignecomplete(game g);
+
+/*vérifie si le jeu est fini*/
+
+int verif_jeufini(game g);
