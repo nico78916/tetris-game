@@ -1,6 +1,7 @@
 #include <MLV/MLV_all.h>
 #include "../header/api.h"
 #include "../header/const.h"
+#include "../header/game.h"
 
 
 void prompt(screen cur,char* message,int display_time){
@@ -143,6 +144,40 @@ screen gen_game(screen current){
         for(j = 0;j < NB_LINES;j++){
             MLV_draw_rectangle((current.width/4 - (NB_COLS*setup.case_size)/2) + i * setup.case_size,height/100 + j * setup.case_size,setup.case_size,setup.case_size,MLV_COLOR_GREY);
         }
+    }
+	/*ce qu'on peut faire, c'est mettre une couleur unique pour les cubes déjà posés comme ça on peut intégrer le bloc qui descend dans la matrice
+	la valeur 0 pour le noir, 1 pour les cubes en bas, ducoup pour faire un traitement sur le cube qui descend, on dit :
+	pour chaque valeur différente de 0 et 1, alors faire traitement*/
+	/*ça permet d'avoir une seule matrice à gérer au lieu de 2 matrices supperposées mais il ne serait pas possible de faire les rotations*/
+	int t1 = SDL_GetTicks(), t2, finw = 0;				/*penser à ajouter time.h*/
+    while(est_fini == 0){								/*boucle du jeu*/
+        figure figure;
+        figure = game->figures;
+        gen_block(figure.blocks);						/*génère le bloque*/
+        /*ajouter un appel de fonction mlv qui matérialise le block*/
+		while(finw == 0){								/*boucle qui fait tomber le bloque et attend les instructions*/
+			t2 = SDL_GetTicks();
+			if(t2 - t1 == 1000){
+								/*si atente d'une seconde, le bloque tombe, modification de la grille*/
+				t1 = t2;
+			}/*else if(){*/
+								/*descente accélérée*/	
+			/*}*/
+			/*if(MLV_wait_keyboards_or_milliseconds()avec un temps de 10ms != valeur si rien)*/
+			/*vérifier que le coup est valide et le faire le cas échéant*/
+			/*if(){*/			/*si flèche gauche, mouvement à gauche*/
+				
+			/*}else if(){*/			/*si flèche droite, mouvement à droite*/
+				
+			/*}else if(){*/			/*si boutton -, rotation à -90°, pas possible si une seule matrice*/
+				
+			/*}else if(){*/			/*si boutton +, rotation à 90°, pas possible si une seule matrice*/
+				
+			/*}*/
+			/*à la fin de chaque while, vérifier que le bloque n'est pas déscendu en bas sinon return 1*/
+		}
+		/*le bloque est déscendu en bas, appel fonction pour vérif si ligne complète et donc effacer*/
+		/*appel de la fonction pour vérifier si le jeu est fini et recommence au premier while*/
     }
     current.id = GAME;
     current.jeu = setup;
