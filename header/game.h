@@ -63,6 +63,14 @@ int verif_sienbas(game g);
 
 int verif_lignecomplete(game g);
 
+/*efface la ligne complète*/
+
+void ligne_complete(game g, int verif[NB_LIGNES]);
+
 /*vérifie si le jeu est fini*/
 
 int verif_jeufini(game g);
+
+/*fait déscendre le cube*/
+
+void descente(game g);
