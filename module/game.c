@@ -230,6 +230,19 @@ int verif_lignecomplete(game g){				/*pour chaque ligne, vérifie si la premièr
 		return verif;
 }
 
+void ligne_complete(game g, int verif[NB_LIGNES]){		/*efface une ligne complète*/
+	int i, j;
+	figure grid;
+	grid = game->grid;
+	for(i=0;i<NB_LIGNES;i++){
+		if(verif[i]==1){
+			for(j=0;j<NB_COLS;j++){
+				grid[i][j] = 0;
+			}
+		}
+	}
+}
+
 int verif_jeufini(game g){
 	int i;
 	figure grid;
@@ -242,3 +255,16 @@ int verif_jeufini(game g){
 	return 0;
 }
 
+void descente(game g){
+	int i, j;
+	figure grid;
+	grid = game->grid;
+	for(i=NB_LIGNES-1;i=0;i--){
+		for(j=0;j<NB_COLS;j++){
+			if(grid[i][j]!=0 && grid[i][j]!=1){
+				grid[i+1][j] = grid[i][j];
+				grid[i][j] = 0;
+			}
+		}
+	}
+}
