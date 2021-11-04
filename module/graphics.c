@@ -120,8 +120,8 @@ screen gen_option(screen current){
 }
 
 screen gen_game(screen current){
-    int width,height,i,j;
-    char *label ="PAUSE";
+    int width,height,i,j, rep = 0, verifligne[NB_LIGNES];
+    char *label ="PAUSE", repc = "0";
     button b;
     game setup;
     current.btncount = 1;
@@ -150,31 +150,43 @@ screen gen_game(screen current){
 	pour chaque valeur différente de 0 et 1, alors faire traitement*/
 	/*ça permet d'avoir une seule matrice à gérer au lieu de 2 matrices supperposées mais il ne serait pas possible de faire les rotations*/
 	int t1 = SDL_GetTicks(), t2, finw = 0;				/*penser à ajouter time.h*/
-    while(est_fini == 0){								/*boucle du jeu*/
+    while(est_fini(setup) == 0){								/*boucle du jeu*/
         figure figure;
-        figure = game->figures;
+        figure = setup->figures;
         gen_block(figure.blocks);						/*génère le bloque*/
         /*ajouter un appel de fonction mlv qui matérialise le block*/
 		while(finw == 0){								/*boucle qui fait tomber le bloque et attend les instructions*/
+			/*penser à mettre un reset buffer*/
+			repc = getchar();
 			t2 = SDL_GetTicks();
-			if(t2 - t1 == 1000){
-								/*si atente d'une seconde, le bloque tombe, modification de la grille*/
-				t1 = t2;
-			}/*else if(){*/
-								/*descente accélérée*/	
-			/*}*/
-			/*if(MLV_wait_keyboards_or_milliseconds()avec un temps de 10ms != valeur si rien)*/
+			if(t2 - t1 >= 1000){
+				if(verif_sienbas(setup) == 0){
+					descente(setup);				/*si atente d'une seconde, le bloque tombe, modification de la grille*/
+					t1 = t2;
+				}
+			}else if(t2 = t1 >= 500 && rep==80{	/*descente accélérée*/
+				if(verif_sienbas(setup) == 0){
+					descente(setup);
+					t1 = t2;
+				}
+			}
 			/*vérifier que le coup est valide et le faire le cas échéant*/
-			/*if(){*/			/*si flèche gauche, mouvement à gauche*/
-				
-			/*}else if(){*/			/*si flèche droite, mouvement à droite*/
-				
-			/*}else if(){*/			/*si boutton -, rotation à -90°, pas possible si une seule matrice*/
+			
+			if(rep==75){			/*si flèche gauche, mouvement à gauche*/
+				mouv_gauche(game g);
+			}else if(rep==77){			/*si flèche droite, mouvement à droite*/
+				mouv_droite(game g);
+			}/*else if(){*/			/*si boutton -, rotation à -90°, pas possible si une seule matrice*/
 				
 			/*}else if(){*/			/*si boutton +, rotation à 90°, pas possible si une seule matrice*/
 				
 			/*}*/
 			/*à la fin de chaque while, vérifier que le bloque n'est pas déscendu en bas sinon return 1*/
+			if(verif_sienbas(setup)==1){
+				finw = 1;
+			}
+		verifligne = verif_lignecomplete(setup);
+		ligne_complete(setup, verifligne);
 		}
 		/*le bloque est déscendu en bas, appel fonction pour vérif si ligne complète et donc effacer*/
 		/*appel de la fonction pour vérifier si le jeu est fini et recommence au premier while*/
