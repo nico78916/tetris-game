@@ -20,8 +20,11 @@
 #define MAX_FIGURES 5
 #define FIGURE_SIZE 4 /* Attention les figures sont des matrices carré*/
 
-int resolution_16_9_w[NB_RESOLUTION];
-int resolution_16_9_l[NB_RESOLUTION];
+#define CONVERT 10
+const int resolution_16_9_w[NB_RESOLUTION];
+const int resolution_16_9_l[NB_RESOLUTION];
+
+const char* convertions[CONVERT];
 
 
 typedef enum {MENU,OPTIONS,GAME,NEWGAME,LOAD}screen_id;
@@ -43,10 +46,9 @@ typedef struct {
 } player;
 
 typedef struct {
-    int grid[NB_LINES][NB_COLS],case_size,slot,ply_count;
+    int grid[NB_LINES][NB_COLS],case_size,slot,ply_count,x,y,height,width;
     figure figures[MAX_FIGURES];
     player players[MAX_PLAYERS];
-
 }game;
 
 typedef struct{

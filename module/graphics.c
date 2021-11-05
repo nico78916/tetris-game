@@ -128,7 +128,6 @@ screen gen_game(screen current){
     height = current.height/5;
     MLV_clear_window(MLV_COLOR_BLACK);
     MLV_draw_text_box_with_font(width * 9,height * 4,width,height,label,default_font,20,MLV_COLOR_WHITE,MLV_COLOR_BLACK,MLV_COLOR_GREY,MLV_TEXT_CENTER,MLV_HORIZONTAL_CENTER,MLV_VERTICAL_CENTER);
-    print("PASS");
     b.height = current.height/5;
     b.width = current.width/10;
     b.x = current.width - current.width/10;
@@ -144,6 +143,10 @@ screen gen_game(screen current){
             MLV_draw_rectangle((current.width/4 - (NB_COLS*setup.case_size)/2) + i * setup.case_size,height/100 + j * setup.case_size,setup.case_size,setup.case_size,MLV_COLOR_GREY);
         }
     }
+    setup.x = (current.width/4 - (NB_COLS*setup.case_size)/2);
+    setup.y = height/100;
+    setup.width = setup.case_size * NB_COLS;
+    setup.height = setup.case_size * NB_LINES;
     current.id = GAME;
     current.jeu = setup;
     return current;
@@ -234,4 +237,30 @@ screen change_resolution(screen current,int rw,int rh){
     current.width = rw;
     MLV_change_window_size(current.width,current.height);
     return gen_option(current);
+}
+
+int htoi(char hex){
+    if(hex > '0' && hex < '9'){
+        return hex - '0';
+    }else{
+        return hex - 'A' + 9;
+    }
+}
+
+MLV_Color convert_hex_to_color(char* x){
+    if(x[0] != '#'){
+        return MLV_COLOR_BLACK;
+    }
+    return MLV_rgba(htoi(x[1]) * 16 + htoi(x[2]),htoi(x[3]) * 16 + htoi(x[4]),htoi(x[5]) * 16 + htoi(x[6]),255);
+}
+
+void draw_game(screen current){
+    game setup;
+    int i,j;
+    setup = current.jeu;
+    for(i = 0;i < NB_COLS;i++){
+        for(j = 0;j < NB_LINES;j++){
+            MLV_draw_rectangle(setup.x + i * setup.case_size,setup.y + j * setup.case_size,setup.case_size,setup.case_size,convert_hex_to_color(convertions[setup.grid[i][j]]));
+        }
+    }
 }
