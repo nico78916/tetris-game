@@ -65,7 +65,7 @@ int verif_lignecomplete(game g);
 
 /*efface la ligne complète*/
 
-void ligne_complete(game g, int verif[NB_LIGNES]);
+void ligne_complete(game g, int verif[NB_LINES]);
 
 /*vérifie si le jeu est fini*/
 

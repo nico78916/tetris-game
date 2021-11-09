@@ -70,7 +70,7 @@ save : fonction pour sauvegarde
 		récupérer une sauvegarde			ok
 		lancer une sauvegarde				à faire
 
-string : manipulation de chaine
+string : manipulation de chaîne
 
 update : fonction click
 
@@ -96,3 +96,5 @@ update : fonction click
 				pas de nouvelles fenêtre
 				retour
 			quitter
+
+Key binding

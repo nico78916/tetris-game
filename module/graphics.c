@@ -120,7 +120,7 @@ screen gen_option(screen current){
 }
 
 screen gen_game(screen current){
-    int width,height,i,j, rep = 0, verifligne[NB_LIGNES];
+    int width,height,i,j, rep = 0, verifligne[NB_LINES];
     char *label ="PAUSE", repc = "0";
     button b;
     game setup;

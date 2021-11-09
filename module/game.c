@@ -201,7 +201,7 @@ int verif_sienbas(game g){
     int i, j;
     figure grid;
     grid = g->grid;
-    for(i=1;i<NB_LIGNES;i++){
+    for(i=1;i<NB_LINES;i++){
         for(j=1;j<NN_COLS;j++){
             if(grid[i][j] == 1 && grid[i-1][j] != 0 && grid[i-1][j] != 1){
                 return 1;
@@ -212,10 +212,10 @@ int verif_sienbas(game g){
 }
 
 int verif_lignecomplete(game g){				/*pour chaque ligne, vérifie si la première valeur de la ligne est 1*/
-    int i, j = 0, k, verif[NB_LIGNES]={0};		/*si elle vaut 1 alors ça check toute les valeurs de la ligne*/
+    int i, j = 0, k, verif[NB_LINES]={0};		/*si elle vaut 1 alors ça check toute les valeurs de la ligne*/
     figure grid;								/*j fait le count et compte le nombre d'itération de 1*/
     grid = g->grid;							/*si j est égal au NB_COLS, alors toute la ligne vaut 1*/
-    for(i=0;i<NB_LIGNES;i++){
+    for(i=0;i<NB_LINES;i++){
         if(grid[i][j]==1){
             for(k=0;k<NB_COLS;k++){
                 if(grid[i][k]==1){
@@ -230,11 +230,11 @@ int verif_lignecomplete(game g){				/*pour chaque ligne, vérifie si la premièr
 		return verif;
 }
 
-void ligne_complete(game g, int verif[NB_LIGNES]){		/*efface une ligne complète*/
+void ligne_complete(game g, int verif[NB_LINES]){		/*efface une ligne complète*/
 	int i, j;
 	figure grid;
 	grid = g->grid;
-	for(i=0;i<NB_LIGNES;i++){
+	for(i=0;i<NB_LINES;i++){
 		if(verif[i]==1){
 			for(j=0;j<NB_COLS;j++){
 				grid[i][j] = 0;
@@ -259,7 +259,7 @@ void descente(game g){
 	int i, j;
 	figure grid;
 	grid = g->grid;
-	for(i=NB_LIGNES-1;i>=0;i--){
+	for(i=NB_LINES-1;i>=0;i--){
 		for(j=0;j<NB_COLS;j++){
 			if(grid[i][j]!=0 && grid[i][j]!=1){
 				grid[i+1][j] = grid[i][j];
@@ -273,13 +273,13 @@ void mouv_gauche(game g){
 	int i, j;
 	figure grid;
 	grid = g->grid;
-	for(i=0;i<NB_LIGNES;i++){
+	for(i=0;i<NB_LINES;i++){
 		if(grid[i][0]!=0 && grid[i][0]!=1){
 			return 0;
 		}
 	}
 	for(j=0;j<NB_COLS;j++){
-		for(i=0;j<NB_LIGNES;i++){
+		for(i=0;j<NB_LINES;i++){
 			if(grid[i][j]!=0 && grid[i][j]!=1){
 				grid[i][j-1] = grid[i][j];
 				grid[i][j] = 0;
@@ -292,13 +292,13 @@ void mouv_droite(game g){
 	int i, j;
 	figure grid;
 	grid = g->grid;
-	for(i=0;i<NB_LIGNES;i++){
+	for(i=0;i<NB_LINES;i++){
 		if(grid[i][NB_CLOS-1]!=0 && grid[i][NB_COLS-1]!=1){
 			return 0;
 		}
 	}
 	for(j=NB_COLS-1;j>=0;j--){
-		for(i=0;j<NB_LIGNES;i++){
+		for(i=0;j<NB_LINES;i++){
 			if(grid[i][j]!=0 && grid[i][j]!=1){
 				grid[i][j+1] = grid[i][j];
 				grid[i][j] = 0;
