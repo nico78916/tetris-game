@@ -59,13 +59,13 @@ int est_fini(game g);
 
 int verif_sienbas(game g);
 
-/*vérifie si une ligne est complète*/
+/*vérifie si une ligne est complète contient ligne_complete*/
 
-int verif_lignecomplete(game g);
+void verif_lignecomplete(game g);
 
 /*efface la ligne complète*/
 
-void ligne_complete(game g, int verif[NB_LINES]);
+/*void ligne_complete(game g, int verif[NB_LINES]);*/
 
 /*vérifie si le jeu est fini*/
 
