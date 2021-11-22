@@ -17,10 +17,12 @@ void quit_game(screen current){
 }
 
 void return_menu(screen* current){
+    printf("update.c    return_menu\n");
     *current = gen_menu(*current);
 }
 
 void on_click_menu(screen* current,int h){
+    printf("update.c    on_click_menu\n");
     switch (h)
     {
     case 4:
@@ -41,6 +43,7 @@ void on_click_menu(screen* current,int h){
 }
 
 void on_click_opts(screen* current,int h){
+    printf("update.c    on_click_opts\n");
     switch (h)
     {
     case 0:
@@ -57,6 +60,7 @@ void on_click_opts(screen* current,int h){
 }
 
 void on_click_ng(screen* current,int h){
+    printf("update.c    on_click_ng\n");
     switch (h)
     {
     case 4:
@@ -73,6 +77,7 @@ void on_click_ng(screen* current,int h){
 }
 
 void update_frame(screen* current){
+    printf("update.c    update_frame\n");
     if(MLV_get_keyboard_state(MLV_KEYBOARD_LALT) == MLV_PRESSED && MLV_get_keyboard_state(MLV_KEYBOARD_F4) == MLV_PRESSED){
         quit_game(*current);
     }
@@ -87,6 +92,7 @@ void update_frame(screen* current){
 }
 
 void on_click(screen* current,int h){
+    printf("update.c    on_click\n");
     switch (current->id)
     {
     case MENU:
@@ -107,5 +113,6 @@ void on_click(screen* current,int h){
 }
 
 void update_seconde(screen* current){
+    printf("update.c    update_seconde\n");
     return;
 }
