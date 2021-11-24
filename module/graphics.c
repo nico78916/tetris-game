@@ -125,13 +125,13 @@ screen gen_option(screen current){
 }
 
 screen gen_game(screen current){
-  int width,height,i,j, finw = 0, count = 0, rnd, unicode;
+  int width,height,i,j, finw = 0, count = 0, rnd;
     char *label ="PAUSE";
     button b;
     game setup;
     figure figure[MAX_FIGURES];
     MLV_Keyboard_button sym;
-    MLV_Keyboard_modifier mod;
+    setup = init_game(setup);
     printf("graphics.c    gen_game\n");
     current.btncount = 1;
     width = current.width/10;
@@ -172,8 +172,9 @@ screen gen_game(screen current){
     for(i=0;i<MAX_FIGURES;i++){     /*génération des 5 premiers bloques*/
       gen_blocks(figure[i].blocks);
     }
+    MLV_actualise_window();
     while(est_fini(setup) == 0){    /*boucle du jeu*/
-      rnd = (rand() % 9) + 2;            /*pour la couleur*/
+      rnd = (rand() % 8) + 2;            /*pour la couleur*/
       printf("%d\n", rnd);
       for(i=0;i<FIGURE_SIZE;i++){
 	for(j=0;j<FIGURE_SIZE;j++){
@@ -200,45 +201,52 @@ screen gen_game(screen current){
         /*ajouter un appel de fonction mlv qui matérialise le block*/
 		while(finw == 0){								/*boucle qui fait tomber le bloque et attend les instructions*/
 			/*penser à mettre un reset buffer*/
+		  MLV_actualise_window();
+		  MLV_wait_milliseconds(500);
+		  MLV_get_keyboard_state(MLV_KEYBOARD_DOWN);
+		  if(count >= 2){
+		    if(verif_sienbas(setup) == 0){
+		      setup = descente(setup);				/*si atente d'une seconde, le bloque tombe, modification de la grille*/
+		      count = 0;
+		    }
+		  }else if(count >= 1 && MLV_get_keyboard_state(MLV_KEYBOARD_DOWN) == MLV_PRESSED){	/*descente accélérée*/
+		    if(verif_sienbas(setup) == 0){
+		      setup = descente(setup);
+		      count = 0;
+		    }
+		  }
+		  /*vérifier que le coup est valide et le faire le cas échéant*/
+		  if(MLV_get_keyboard_state(MLV_KEYBOARD_LEFT) == MLV_PRESSED){	        /*si flèche gauche, mouvement à gauche*/
+		    setup = mouv_gauche(setup);
+		  }else if(MLV_get_keyboard_state(MLV_KEYBOARD_RIGHT) == MLV_PRESSED){	/*si flèche droite, mouvement à droite*/
+		    setup = mouv_droite(setup);
+		  }else if(MLV_get_keyboard_state(MLV_KEYBOARD_p) == MLV_PRESSED || sym == 27 || sym == 19){
+		    printf("insérer une fonction pour la pause (appuie sur p ou echap)\n");
+		    MLV_wait_seconds(2);
+		  }/*else if(){*/			/*si boutton +, rotation à 90°, pas possible si une seule matrice*/
+				
+		  /*}*/
+		  /*à la fin de chaque while, vérifier que le bloque n'est pas déscendu en bas sinon return 1*/
 		  for(i=0;i<NB_LINES;i++){
 		    for(j=0;j<NB_COLS;j++){
 		      printf("%d ", setup.grid[i][j]);
 		    }
 		    printf("\n");
 		  }
-		  MLV_wait_milliseconds(500);
-		  MLV_wait_keyboard_or_seconds(&sym, &mod, &unicode, 0);
-		  if(count >= 2){
-		    if(verif_sienbas(setup) == 0){
-		      descente(setup);				/*si atente d'une seconde, le bloque tombe, modification de la grille*/
-		      count = 0;
-		    }
-		  }else if(count >= 1 && sym==80){	/*descente accélérée*/
-		    if(verif_sienbas(setup) == 0){
-		      descente(setup);
-		      count = 0;
-		    }
-		  }
-		  /*vérifier que le coup est valide et le faire le cas échéant*/
-		  if(sym==75){	        /*si flèche gauche, mouvement à gauche*/
-		    mouv_gauche(setup);
-		  }else if(sym==77){	/*si flèche droite, mouvement à droite*/
-		    mouv_droite(setup);
-		  }else if(sym == 112 || sym == 27){
-		    printf("insérer une fonction pour la pause (appuie sur p ou echap)\n");
-		  }/*else if(){*/			/*si boutton +, rotation à 90°, pas possible si une seule matrice*/
-				
-		  /*}*/
-		  /*à la fin de chaque while, vérifier que le bloque n'est pas déscendu en bas sinon return 1*/
 		  if(verif_sienbas(setup)==1){
 		    finw = 1;
 		  }
-		  verif_lignecomplete(setup);
 		  count++;
+		  sym = 0;
 		}
+		/*il faut que le bloque s'intègre aux bloques fixes*/
+		setup = fixer_bloque(setup);
+		setup = verif_lignecomplete(setup);
+		finw = 0;
 		/*le bloque est déscendu en bas, appel fonction pour vérif si ligne complète et donc effacer*/
 		/*appel de la fonction pour vérifier si le jeu est fini et recommence au premier while*/
     }
+    
     for(i=0;i<MAX_FIGURES;i++){
       setup.figures[i] = figure[i];
     }

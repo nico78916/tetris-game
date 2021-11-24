@@ -32,6 +32,7 @@ int main(int argc,char** argv){
     screen current;
     MLV_Button_state LastState = MLV_RELEASED;
     int press_count = 0;
+    srand(time(NULL));
     MLV_get_desktop_size(&mw,&mh);
     current.max_height = mh;
     current.max_width = mw;

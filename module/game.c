@@ -149,7 +149,6 @@ void gen_blocks(int block[][FIGURE_SIZE]){
 
     };
     printf("game.c    gen_blocks\n");
-    srand(time(NULL));
     rnd = rand() % 8;
     copy_blocks(figs[rnd],block);
     rnd = rand() % 4;
@@ -198,7 +197,7 @@ int est_fini(game g){
     int i;
     printf("game.c    est_fini\n");
     for(i=0;i<NB_COLS;i++){
-        if(g.grid[0][i]!=0){
+        if(g.grid[3][i]!=0){
             return 1;       /*Si return 1 alors il y a un bloque sur la première ligne, le jeu est fini*/
         }
     }
@@ -208,9 +207,14 @@ int est_fini(game g){
 int verif_sienbas(game g){
   int i, j;
   printf("game.c    verif_sienbas\n");
-  for(i=1;i<NB_LINES;i++){
-    for(j=1;j<NB_COLS;j++){
-      if(g.grid[i][j] == 1 && g.grid[i-1][j] != 0 && g.grid[i-1][j] != 1){
+  for(j=0;j<NB_COLS;j++){
+    if(g.grid[NB_LINES-1][j] > 1){
+      return 1;
+    }
+  }
+  for(i=NB_LINES-1;i>0;i--){
+    for(j=0;j<NB_COLS;j++){
+      if(g.grid[i][j] == 1 && g.grid[i-1][j] > 1){
 	return 1;
       }
     }
@@ -218,13 +222,13 @@ int verif_sienbas(game g){
   return 0;
 }
 
-void verif_lignecomplete(game *g){	/*pour chaque ligne, vérifie si la première valeur de la ligne est 1*/
+game verif_lignecomplete(game g){	/*pour chaque ligne, vérifie si la première valeur de la ligne est 1*/
   int i, j = 0, k, verif[NB_LINES]={0};		/*si elle vaut 1 alors ça check toute les valeurs de la ligne*/		/*j fait le count et compte le nombre d'itération de 1*/
   printf("game.c    verif_lignecomplete\n");/*si j est égal au NB_COLS, alors toute la ligne vaut 1*/
   for(i=0;i<NB_LINES;i++){
-    if(g->grid[i][j]==1){
+    if(g.grid[i][j]==1){
       for(k=0;k<NB_COLS;k++){
-	if(g->grid[i][k]==1){
+	if(g.grid[i][k]==1){
 	  j++;
 	}
       }
@@ -237,10 +241,11 @@ void verif_lignecomplete(game *g){	/*pour chaque ligne, vérifie si la première
   for(i=0;i<NB_LINES;i++){
     if(verif[i]==1){
       for(j=0;j<NB_COLS;j++){
-	g->grid[i][j] = 0;
+	g.grid[i][j] = 0;
       }
     }
   }
+  return g;
 }
 
 /*void ligne_complete(game g, int verif[NB_LINES]){efface une ligne complète
@@ -259,59 +264,76 @@ int verif_jeufini(game g){
   int i;
   printf("game.c    verif_jeufini\n");
   for(i=0;i<NB_COLS;i++){
-    if(g.grid[0][i]==1){
+    if(g.grid[3][i] > 1){
       return 1;
     }
   }
   return 0;
 }
 
-void descente(game *g){
+game descente(game g){
   int i, j;
   printf("game.c    descente\n");
   for(i=NB_LINES-1;i>=0;i--){
     for(j=0;j<NB_COLS;j++){
-      if(g->grid[i][j]!=0 && g->grid[i][j]!=1){
-	g->grid[i+1][j] = g->grid[i][j];
-	g->grid[i][j] = 0;
+      if(g.grid[i][j]!=0 && g.grid[i][j]!=1){
+	g.grid[i+1][j] = g.grid[i][j];
+	g.grid[i][j] = 0;
       }
     }
   }
+  return g;
 }
 
-void mouv_gauche(game *g){
+game mouv_gauche(game g){
   int i, j;
   printf("game.c    mouv_gauche\n");
   for(i=0;i<NB_LINES;i++){
-    if(g->grid[i][0]!=0 && g->grid[i][0]!=1){
-      return;
+    if(g.grid[i][0] > 1){
+      printf("0 ");
+      return g;
     }
   }
-  for(j=0;j<NB_COLS;j++){
-    for(i=0;j<NB_LINES;i++){
-      if(g->grid[i][j]!=0 && g->grid[i][j]!=1){
-	g->grid[i][j-1] = g->grid[i][j];
-	g->grid[i][j] = 0;
+  for(j=1;j<NB_COLS;j++){
+    for(i=0;i<NB_LINES;i++){
+      if(g.grid[i][j] > 1){
+	printf("1\n");
+	g.grid[i][j-1] = g.grid[i][j];
+	g.grid[i][j] = 0;
       }
     }
   }
+  printf("2\n");
+  return g;
 }
 
-void mouv_droite(game *g){
+game mouv_droite(game g){
   int i, j;
   printf("game.c    mouv_droite\n");
   for(i=0;i<NB_LINES;i++){
-    if(g->grid[i][NB_COLS-1]!=0 && g->grid[i][NB_COLS-1]!=1){
-      return;
+    if(g.grid[i][NB_COLS-1]!=0 && g.grid[i][NB_COLS-1]!=1){
+      return g;
     }
   }
-  for(j=NB_COLS-1;j>=0;j--){
-    for(i=0;j<NB_LINES;i++){
-      if(g->grid[i][j]!=0 && g->grid[i][j]!=1){
-	g->grid[i][j+1] = g->grid[i][j];
-	g->grid[i][j] = 0;
+  for(j=NB_COLS-2;j>=0;j--){
+    for(i=0;i<NB_LINES;i++){
+      if(g.grid[i][j]!=0 && g.grid[i][j]!=1){
+	g.grid[i][j+1] = g.grid[i][j];
+	g.grid[i][j] = 0;
       }
     }
   }
+  return g;
 }
 	
+game fixer_bloque(game g){
+  int i, j;
+  for(i=0;i<NB_LINES;i++){
+    for(j=0;j<NB_COLS;j++){
+      if(g.grid[i][j] > 1){
+	g.grid[i][j] = 1;
+      }
+    }
+  }
+  return g;
+}
