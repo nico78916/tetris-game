@@ -80,3 +80,5 @@ game mouv_droite(game g);
 game mouv_gauche(game g);
 
 game fixer_bloque(game g);
+
+void init_code_couleur(code_couleur c[MAX_COLOR]);

@@ -208,13 +208,13 @@ int verif_sienbas(game g){
   int i, j;
   printf("game.c    verif_sienbas\n");
   for(j=0;j<NB_COLS;j++){
-    if(g.grid[NB_LINES-1][j] > 1){
+    if(g.grid[NB_LINES-1][j] > (MAX_COLOR-1)/2){
       return 1;
     }
   }
   for(i=NB_LINES-1;i>0;i--){
     for(j=0;j<NB_COLS;j++){
-      if(g.grid[i][j] == 1 && g.grid[i-1][j] > 1){
+      if(g.grid[i][j]>0 && g.grid[i][j]<=(MAX_COLOR-1)/2 && g.grid[i-1][j] > (MAX_COLOR-1)/2){
 	return 1;
       }
     }
@@ -223,12 +223,12 @@ int verif_sienbas(game g){
 }
 
 game verif_lignecomplete(game g){	/*pour chaque ligne, vérifie si la première valeur de la ligne est 1*/
-  int i, j = 0, k, verif[NB_LINES]={0};		/*si elle vaut 1 alors ça check toute les valeurs de la ligne*/		/*j fait le count et compte le nombre d'itération de 1*/
+  int i, j = 0, k, l, verif[NB_LINES]={0};		/*si elle vaut 1 alors ça check toute les valeurs de la ligne*/		/*j fait le count et compte le nombre d'itération de 1*/
   printf("game.c    verif_lignecomplete\n");/*si j est égal au NB_COLS, alors toute la ligne vaut 1*/
   for(i=0;i<NB_LINES;i++){
-    if(g.grid[i][j]==1){
+    if(g.grid[i][j]>0 && g.grid[i][j]<=(MAX_COLOR-1)/2){
       for(k=0;k<NB_COLS;k++){
-	if(g.grid[i][k]==1){
+	if(g.grid[i][k]>0 && g.grid[i][k] <= (MAX_COLOR-1)/2){
 	  j++;
 	}
       }
@@ -242,6 +242,9 @@ game verif_lignecomplete(game g){	/*pour chaque ligne, vérifie si la première 
     if(verif[i]==1){
       for(j=0;j<NB_COLS;j++){
 	g.grid[i][j] = 0;
+	for(l=i;l>3;l--){
+	  g.grid[l][j] = g.grid[l-1][j];
+	}
       }
     }
   }
@@ -264,7 +267,7 @@ int verif_jeufini(game g){
   int i;
   printf("game.c    verif_jeufini\n");
   for(i=0;i<NB_COLS;i++){
-    if(g.grid[3][i] > 1){
+    if(g.grid[3][i] > 0){
       return 1;
     }
   }
@@ -276,7 +279,7 @@ game descente(game g){
   printf("game.c    descente\n");
   for(i=NB_LINES-1;i>=0;i--){
     for(j=0;j<NB_COLS;j++){
-      if(g.grid[i][j]!=0 && g.grid[i][j]!=1){
+      if(g.grid[i][j]>(MAX_COLOR-1)/2){
 	g.grid[i+1][j] = g.grid[i][j];
 	g.grid[i][j] = 0;
       }
@@ -289,14 +292,21 @@ game mouv_gauche(game g){
   int i, j;
   printf("game.c    mouv_gauche\n");
   for(i=0;i<NB_LINES;i++){
-    if(g.grid[i][0] > 1){
+    if(g.grid[i][0] > (MAX_COLOR-1)/2){
       printf("0 ");
       return g;
     }
   }
+  for(i=0;i<NB_LINES;i++){
+    for(j=1;j<NB_COLS;j++){
+      if(g.grid[i][j-1]>0 && g.grid[i][j-1]<=(MAX_COLOR-1)/2 && g.grid[i][j] > (MAX_COLOR-1)/2){
+	return g;
+      }
+    }
+  }
   for(j=1;j<NB_COLS;j++){
     for(i=0;i<NB_LINES;i++){
-      if(g.grid[i][j] > 1){
+      if(g.grid[i][j] > (MAX_COLOR-1)/2){
 	printf("1\n");
 	g.grid[i][j-1] = g.grid[i][j];
 	g.grid[i][j] = 0;
@@ -311,13 +321,20 @@ game mouv_droite(game g){
   int i, j;
   printf("game.c    mouv_droite\n");
   for(i=0;i<NB_LINES;i++){
-    if(g.grid[i][NB_COLS-1]!=0 && g.grid[i][NB_COLS-1]!=1){
+    if(g.grid[i][NB_COLS-1]>(MAX_COLOR-1)/2){
       return g;
+    }
+  }
+  for(i=0;i<NB_LINES;i++){
+    for(j=0;j<NB_COLS-1;j++){
+      if(g.grid[i][j+1]>0 && g.grid[i][j+1]<=(MAX_COLOR-1)/2 && g.grid[i][j] > (MAX_COLOR-1)/2){
+	return g;
+      }
     }
   }
   for(j=NB_COLS-2;j>=0;j--){
     for(i=0;i<NB_LINES;i++){
-      if(g.grid[i][j]!=0 && g.grid[i][j]!=1){
+      if(g.grid[i][j]>(MAX_COLOR-1)/2){
 	g.grid[i][j+1] = g.grid[i][j];
 	g.grid[i][j] = 0;
       }
@@ -330,10 +347,34 @@ game fixer_bloque(game g){
   int i, j;
   for(i=0;i<NB_LINES;i++){
     for(j=0;j<NB_COLS;j++){
-      if(g.grid[i][j] > 1){
-	g.grid[i][j] = 1;
+      if(g.grid[i][j]>(MAX_COLOR-1)/2){
+	g.grid[i][j] = g.grid[i][j]-10;
       }
     }
   }
   return g;
+}
+
+void init_code_couleur(code_couleur c[MAX_COLOR]){
+    c[0].color = MLV_COLOR_BLACK;
+    c[1].color = MLV_COLOR_RED;
+    c[2].color = MLV_COLOR_ORANGE;
+    c[3].color = MLV_COLOR_YELLOW;
+    c[4].color = MLV_COLOR_GREEN;
+    c[5].color = MLV_COLOR_CYAN;
+    c[6].color = MLV_COLOR_BLUE;
+    c[7].color = MLV_COLOR_SEA_GREEN;
+    c[8].color = MLV_COLOR_VIOLET;
+    c[9].color = MLV_COLOR_DARK_BLUE;
+    c[10].color = MLV_COLOR_DARKRED;
+    c[11].color = MLV_COLOR_RED;
+    c[12].color = MLV_COLOR_ORANGE;
+    c[13].color = MLV_COLOR_YELLOW;
+    c[14].color = MLV_COLOR_GREEN;
+    c[15].color = MLV_COLOR_CYAN;
+    c[16].color = MLV_COLOR_BLUE;
+    c[17].color = MLV_COLOR_SEA_GREEN;
+    c[18].color = MLV_COLOR_VIOLET;
+    c[19].color = MLV_COLOR_DARK_BLUE;
+    c[20].color = MLV_COLOR_DARKRED;
 }

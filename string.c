@@ -1,3 +1,5 @@
+#include<stdio.h>
+
 int compare(char* s1,char* s2){
     int i = 0;
     printf("string.c    compare\n");

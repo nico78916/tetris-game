@@ -21,6 +21,9 @@
 #define FIGURE_SIZE 4 /* Attention les figures sont des matrices carré*/
 
 #define CONVERT 10
+
+#define MAX_COLOR 21
+
 const int resolution_16_9_w[NB_RESOLUTION];
 const int resolution_16_9_l[NB_RESOLUTION];
 
@@ -59,6 +62,11 @@ typedef struct{
     MLV_Button_state pressed;
     MLV_Button_state long_press;
 } screen;
+
+typedef struct{
+    MLV_Color color;
+
+} code_couleur;
 
 MLV_Font* default_font; 
 MLV_Font* western_font;
