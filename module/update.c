@@ -10,17 +10,19 @@ void quit_game(screen current){
     MLV_free_font(western_font);
     MLV_free_font(title_font);
     MLV_free_window();
-    if(current.jeu.players == 1){
+    if(current.jeu.ply_count == 1){
         write_save(current.jeu);
     }
     exit(0);
 }
 
 void return_menu(screen* current){
+    printf("update.c    return_menu\n");
     *current = gen_menu(*current);
 }
 
 void on_click_menu(screen* current,int h){
+    printf("update.c    on_click_menu\n");
     switch (h)
     {
     case 4:
@@ -41,6 +43,7 @@ void on_click_menu(screen* current,int h){
 }
 
 void on_click_opts(screen* current,int h){
+    printf("update.c    on_click_opts\n");
     switch (h)
     {
     case 0:
@@ -48,6 +51,7 @@ void on_click_opts(screen* current,int h){
         break;
     case 1:
         *current = switch_widow_type(*current);
+        break;
     case 4:
         *current = gen_menu(*current);
         break;
@@ -57,6 +61,7 @@ void on_click_opts(screen* current,int h){
 }
 
 void on_click_ng(screen* current,int h){
+    printf("update.c    on_click_ng\n");
     switch (h)
     {
     case 4:
@@ -73,20 +78,18 @@ void on_click_ng(screen* current,int h){
 }
 
 void update_frame(screen* current){
+    printf("update.c    update_frame\n");
     if(MLV_get_keyboard_state(MLV_KEYBOARD_LALT) == MLV_PRESSED && MLV_get_keyboard_state(MLV_KEYBOARD_F4) == MLV_PRESSED){
         quit_game(*current);
     }
 
     if(MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED){
-        if(current->id == GAME){
-            /* pour le menu de pause */
-        }else{
             return_menu(current);
-        }
     }
 }
 
 void on_click(screen* current,int h){
+    printf("update.c    on_click\n");
     switch (current->id)
     {
     case MENU:
@@ -107,5 +110,7 @@ void on_click(screen* current,int h){
 }
 
 void update_seconde(screen* current){
+    /*printf("update.c    update_seconde\n");*/
+    current->id;
     return;
 }

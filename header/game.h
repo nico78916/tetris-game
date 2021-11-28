@@ -59,13 +59,13 @@ int est_fini(game g);
 
 int verif_sienbas(game g);
 
-/*vérifie si une ligne est complète*/
+/*vérifie si une ligne est complète contient ligne_complete*/
 
-int verif_lignecomplete(game g);
+game verif_lignecomplete(game g);
 
 /*efface la ligne complète*/
 
-void ligne_complete(game g, int verif[NB_LINES]);
+/*void ligne_complete(game g, int verif[NB_LINES]);*/
 
 /*vérifie si le jeu est fini*/
 
@@ -73,4 +73,12 @@ int verif_jeufini(game g);
 
 /*fait déscendre le cube*/
 
-void descente(game g);
+game descente(game g);
+
+game mouv_droite(game g);
+
+game mouv_gauche(game g);
+
+game fixer_bloque(game g);
+
+void init_code_couleur(code_couleur c[MAX_COLOR]);

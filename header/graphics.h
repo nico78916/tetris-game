@@ -60,3 +60,25 @@ screen change_resolution(screen current,int rw,int rh);
  * @param str de taille 21 EXACTEMENT
 */
 void get_screen_resolution_text(screen current,char* str);
+
+
+/**
+* Dessine la grille du jeu
+* @param current L'écran actuelle
+* @param setup le jeu
+*/
+void draw_grid(game setup);
+
+/**
+* Dessine la figure donnée en fonction de la taille des cases
+* @param fig la figure
+* @param case_size la taille des cases
+*/
+void draw_figure(figure fig,int case_size);
+
+/**
+* Efface la figure donnée en fonction de la taille des cases
+* @param fig la figure
+* @param case_size la taille des cases
+*/
+void erase_figure(figure fig,int case_size);

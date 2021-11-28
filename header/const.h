@@ -21,13 +21,18 @@
 #define FIGURE_SIZE 4 /* Attention les figures sont des matrices carré*/
 
 #define CONVERT 10
-const int resolution_16_9_w[NB_RESOLUTION];
-const int resolution_16_9_l[NB_RESOLUTION];
+
+#define MAX_COLOR 21
+
+#define CLAVIER_OPTIONS 5
+#define CLAVIER_TOUCHE_SIZE 25
+
+int resolution_16_9_w[NB_RESOLUTION];
+int resolution_16_9_l[NB_RESOLUTION];
 
 const char* convertions[CONVERT];
 
-
-typedef enum {MENU,OPTIONS,GAME,NEWGAME,LOAD}screen_id;
+typedef enum {MENU,OPTIONS,GAME,NEWGAME,LOAD,PSEUDO}screen_id;
 
 typedef struct {
     int x,y,width,height;
@@ -60,6 +65,19 @@ typedef struct{
     MLV_Button_state long_press;
 } screen;
 
+typedef struct{
+    MLV_Color color;
+
+} code_couleur;
+
+typedef struct{
+	button numerique[10];
+	button alpha[26];
+	button options[CLAVIER_OPTIONS];
+}clavier;
+
 MLV_Font* default_font; 
 MLV_Font* western_font;
 MLV_Font* title_font;
+
+

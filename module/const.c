@@ -1,6 +1,6 @@
 #include <MLV/MLV_all.h>
 #include "../header/const.h"
-const int resolution_16_9_w[NB_RESOLUTION] = {
+int resolution_16_9_w[NB_RESOLUTION] = {
     3840,
     2560,
     1920,
@@ -9,7 +9,7 @@ const int resolution_16_9_w[NB_RESOLUTION] = {
     1280,
     1024
 };
-const int resolution_16_9_l[NB_RESOLUTION] = {
+int resolution_16_9_l[NB_RESOLUTION] = {
     2160,
     1440,
     1080,

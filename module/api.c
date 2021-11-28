@@ -3,8 +3,9 @@ int print(char*a){
     return printf("%s \n",a);
 }
 
-int int_indexOf(int query,int* table,int c){
+int int_indexOf(int query,int table[],int c){
     int i;
+    printf("api.c    int_indexOf\n");
     for(i = 0;i<c;i++){
         if(query == table[i]){
             return i;
@@ -12,3 +13,4 @@ int int_indexOf(int query,int* table,int c){
     }
     return -1;
 }
+/* simple test */

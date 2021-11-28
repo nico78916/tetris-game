@@ -27,14 +27,17 @@ void usage(char *nom){
  */
 int main(int argc,char** argv){
     unsigned int mw,mh,width = DEFAULT_SCREEN_WIDTH,height = DEFAULT_SCREEN_HEIGHT;/* ils ne seront jamais négatif*/ 
-    int i,count = 0,mouseX,mouseY,h;
+    int i,count = 0,mouseX,mouseY,h,tw,th;
     button btn[MAX_BUTTON];
     screen current;
     MLV_Button_state LastState = MLV_RELEASED;
-    int press_count = 0;
+    srand(time(NULL));
     MLV_get_desktop_size(&mw,&mh);
     current.max_height = mh;
     current.max_width = mw;
+    current.jeu = init_game(current.jeu);
+    
+
     if(argc > 1){
         /*On check si l'utilisateur veut quelque chose de spécial*/
         if((i=indexOf("-f",argv,argc)) != -1){
@@ -65,8 +68,32 @@ int main(int argc,char** argv){
     current.height = height;
     current.width = width;
     current = gen_menu(current);
+    current.jeu.case_size = height/NB_LINES;
+    current.jeu.width = current.jeu.case_size * NB_COLS;
+    current.jeu.height = current.jeu.case_size * NB_LINES;
+    current.jeu.x = (current.width/2 - (current.jeu.width)/2);
+    current.jeu.y = height/100;
+    gen_blocks(current.jeu.figures[0].blocks);
+    srand(time(NULL));
+	current.jeu.figures[0].x = current.jeu.x + (rand() % (current.jeu.x + current.jeu.width)) - current.jeu.case_size/2;
+    current.jeu.figures[0].y = 0;
     while(1){/* Entrer dans la boucle principale */
         MLV_wait_milliseconds(1000/30);/* 30 FPS */
+        if(current.id == MENU){
+        	/* ON UPDATE L'ARRIERE PLAN */
+        	if(count == 29){
+				gen_blocks(current.jeu.figures[0].blocks);
+				
+				current.jeu.figures[0].x = current.jeu.x + (rand() % (current.jeu.x + current.jeu.width)) - current.jeu.case_size/2;
+				current.jeu.figures[0].y = 0;
+        	}
+        	erase_figure(current.jeu.figures[0],current.jeu.case_size);
+        	draw_figure(current.jeu.figures[0],current.jeu.case_size);
+        	current.jeu.figures[0].y += current.jeu.case_size;
+        	MLV_get_size_of_text_with_font("TETE RISSE",&tw,&th,title_font);
+    		MLV_draw_text_with_font(width/2-tw/2,height/10-th/2,"TETE RISSE",title_font,MLV_COLOR_WHITE);
+        }
+        
         for(i=0;i<current.btncount;i++){
             MLV_draw_text_box_with_font(btn[i].x,btn[i].y,btn[i].width,btn[i].height,btn[i].label,default_font,20,MLV_COLOR_WHITE,MLV_COLOR_BLACK,MLV_COLOR_GREY,MLV_TEXT_CENTER,MLV_HORIZONTAL_CENTER,MLV_VERTICAL_CENTER); 
         }
@@ -88,7 +115,9 @@ int main(int argc,char** argv){
             current.pressed = MLV_RELEASED;
             current.long_press = MLV_RELEASED;
         }
+        
         update_frame(&current);
+        
         count++;
         if(count >= 30){
             update_seconde();
