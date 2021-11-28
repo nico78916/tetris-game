@@ -1,5 +1,6 @@
 #include <stdio.h>
 int print(char*a){
+    printf("api.c    print\n");
     return printf("%s \n",a);
 }
 
