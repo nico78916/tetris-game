@@ -100,3 +100,5 @@ clavier init_clavier(clavier clav,int starty,int size);
  * @return screen 
  */
 screen gen_pseudo(screen current);
+
+void gen_pause(screen current);

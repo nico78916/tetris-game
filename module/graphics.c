@@ -440,7 +440,7 @@ void draw_figure(figure fig, int case_size)
 
 screen gen_game(screen current)
 {
-  int height, i, j, finw = 0, count = 0, rnd, couleur;
+  int height, i, j, finw = 0, count = 0, rnd, couleur, mouv_x, mouv_y;
   char *label = "PAUSE";
   button b;
   figure figure[MAX_FIGURES];
@@ -511,6 +511,8 @@ screen gen_game(screen current)
         current.jeu.grid[i][j + 5] = figure[0].blocks[i][j];
       }
     }
+    mouv_x = 0;
+    mouv_y = 5;
     for (i = 1; i < MAX_FIGURES; i++)
     { /*les bloques dans la fille sont décallés*/
       figure[i - 1] = figure[i];
@@ -521,22 +523,24 @@ screen gen_game(screen current)
     { /*boucle qui fait tomber le bloque et attend les instructions*/
       /*penser à mettre un reset buffer*/
       MLV_actualise_window();
-      MLV_wait_milliseconds(250);
+      MLV_wait_milliseconds(200);
       MLV_get_keyboard_state(MLV_KEYBOARD_DOWN);
-      if (count >= 2)
+      if (count >= 4)
       {
         if (verif_sienbas(current.jeu) == 0)
         {
           current.jeu = descente(current.jeu); /*si atente d'une seconde, le bloque tombe, modification de la grille*/
           count = 0;
+	  mouv_x += 1;
         }
       }
-      else if (count >= 1 && MLV_get_keyboard_state(MLV_KEYBOARD_DOWN) == MLV_PRESSED)
+      else if (count >= 2 && MLV_get_keyboard_state(MLV_KEYBOARD_DOWN) == MLV_PRESSED)
       { /*descente accélérée*/
         if (verif_sienbas(current.jeu) == 0)
         {
           current.jeu = descente(current.jeu);
           count = 0;
+	   mouv_x += 1;
         }
       }
 
@@ -549,26 +553,25 @@ screen gen_game(screen current)
       if (MLV_get_keyboard_state(MLV_KEYBOARD_LEFT) == MLV_PRESSED)
       { /*si flèche gauche, mouvement à gauche*/
         current.jeu = mouv_gauche(current.jeu);
+	mouv_y -= 1;
       }
       else if (MLV_get_keyboard_state(MLV_KEYBOARD_RIGHT) == MLV_PRESSED)
       { /*si flèche droite, mouvement à droite*/
         current.jeu = mouv_droite(current.jeu);
+	mouv_y += 1;
+      } else if (MLV_get_keyboard_state(MLV_KEYBOARD_UP) == MLV_PRESSED)
+      { /*si flèche droite, mouvement à droite*/
+        current.jeu = mouv_rot(current.jeu, mouv_x, mouv_y);
       }
       else if (MLV_get_keyboard_state(MLV_KEYBOARD_p) == MLV_PRESSED || MLV_get_keyboard_state(MLV_KEYBOARD_PAUSE) == MLV_PRESSED || MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED)
       {
         printf("insérer une fonction pour la pause (appuie sur p, pause ou echap)\n");
         MLV_save_screen();
         MLV_clear_window(MLV_COLOR_BLACK);
-        MLV_draw_text_with_font(200, 200, "PAUSE", default_font, 20, MLV_COLOR_RED);
-        MLV_actualise_window();
-        while (1)
-        {
-          MLV_wait_seconds(4);
-        }
+	gen_pause(current);
         MLV_load_screen();
         MLV_actualise_window();
         /*MLV_create_window("Pause", "Pause", 400, 200);*/
-        MLV_wait_seconds(4);
       } /*else if(){*/ /*si boutton +, rotation à 90°, pas possible si une seule matrice*/
 
       /*}*/
@@ -763,4 +766,19 @@ void draw_game(screen current)
       MLV_draw_rectangle(setup.x + i * setup.case_size, setup.y + j * setup.case_size, setup.case_size, setup.case_size, convert_hex_to_color(convertions[setup.grid[i][j]]));
     }
   }
+}
+
+void gen_pause(screen current)
+{
+  int width, height, bw, bh;
+  game setup;
+  printf("graphics.c    gen_pause\n");
+  setup = current.jeu;
+  width = current.width;
+  height = current.height;
+  bw = width / 2;
+  bh = height / 2;
+  MLV_draw_text_with_font(width / 2 - bw / 2, height / 2 - bw / 2, "PAUSE", title_font, MLV_COLOR_WHITE);
+  MLV_actualise_window();
+  MLV_wait_seconds(4);
 }

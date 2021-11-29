@@ -388,6 +388,35 @@ game mouv_droite(game g){
   }
   return g;
 }
+
+game mouv_rot(game g, int x, int y){
+  int i, j;
+  int figure[FIGURE_SIZE][FIGURE_SIZE], figure2[FIGURE_SIZE][FIGURE_SIZE];
+  printf("game.c    mouv_rot\n");
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      figure[i][j] = g.grid[i+x][j+y];
+      figure2[i][j] = g.grid[i+x][j+y];
+      if(figure[i][j] > 0 && figure[i][j] <= (MAX_COLOR-1)/2){
+	figure[i][j] = 0;
+      }
+    }
+  }
+  rot_90(figure);
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(figure2[i][j]>0 && figure2[i][j]<=(MAX_COLOR-1)/2 && figure[i][j] != 0){
+        return g;
+      }
+    }
+  }
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      g.grid[i+x][j+y] = figure[i][j];
+    }
+  }
+  return g;
+}
 	
 game fixer_bloque(game g){
   int i, j;
