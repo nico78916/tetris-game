@@ -77,8 +77,8 @@ game load_save(int slot){
     FILE * save;
     game thing;
     char path[13];
-    char mat[NB_LINES*NB_COLS+1];
-    char fig[MAX_FIGURES][FIGURE_SIZE*FIGURE_SIZE];
+    char mat[STR_MAT_GRID];
+    char fig[MAX_FIGURES][STR_FIG];
     int score,i,j,k = 0,l=0;
     init_mat(thing.grid);
     sprintf(path,"./save/%d.txt",slot);
@@ -117,8 +117,8 @@ void write_save(game g){
     int i,j,k = 0,l;
     FILE * save;
     char path[13];
-    char str[NB_LINES*(NB_COLS + 1)];
-    char fig[FIGURE_SIZE * FIGURE_SIZE * MAX_FIGURES];
+    char str[STR_MAT_GRID];
+    char fig[STR_FIGS];
     if(g.ply_count){
         
      return;   
