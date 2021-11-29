@@ -77,6 +77,9 @@ game load_save(int slot){
     FILE * save;
     game thing;
     char path[13];
+    char mat[NB_LINES*NB_COLS+1];
+    char fig[MAX_FIGURES][FIGURE_SIZE*FIGURE_SIZE];
+    int score,i,j,k = 0,l=0;
     init_mat(thing.grid);
     sprintf(path,"./save/%d.txt",slot);
     save = fopen( path, "r" );
@@ -84,11 +87,29 @@ game load_save(int slot){
         print( "La sauvegarde est corrompu ou inaccessible");
         return thing;
     }
-    thing.players[0].score = get_score_from_save(save);
-    get_game_matrice(save,thing.grid);
-    print("b");
-    thing = get_figures(save,thing);
+    fscanf(save,"score:\n{%d};game:{%[^}];figures{{%[^}],{%[^}],{%[^}],{%[^}],{%[^}]}",&score,mat,fig[0],fig[1],fig[2],fig[3],fig[4]);
     fclose( save );
+    if(strlen(mat) != (NB_COLS)*(NB_LINES)){
+        print("SAUVEGARDE CORROMPU IMPOSSIBLE DE CONTINUER LE PROGRAMME");
+        exit(-1);
+    }
+    for(i = 0;i<NB_LINES;i++){
+        for(j=0;j<NB_COLS;j++){
+            thing.grid[i][j] = mat[k] - '0';
+            k++;
+        }
+    }
+    print_mat(thing.grid,NB_LINES,NB_COLS);
+    for(i=0;i<5;i++){
+        l = 0;
+        for(j=0;j<FIGURE_SIZE;j++){
+            for(k=0;k<FIGURE_SIZE;k++){
+                thing.figures[i].blocks[j][k] = fig[i][l]-'0';
+                l++;
+            }
+        }
+    }
+    thing.players[0].score = score;
     return thing;
 }
 

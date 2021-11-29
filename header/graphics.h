@@ -82,3 +82,21 @@ void draw_figure(figure fig,int case_size);
 * @param case_size la taille des cases
 */
 void erase_figure(figure fig,int case_size);
+
+/**
+ * @brief Initialise le clavier
+ * 
+ * @param clav le clavier
+ * @param starty Le debut du clavier
+ * @param size la taille d'une touche
+ * @return clavier 
+ */
+clavier init_clavier(clavier clav,int starty,int size);
+
+/**
+ * @brief Génère l'écran des pseudo !
+ * 
+ * @param current l'écran
+ * @return screen 
+ */
+screen gen_pseudo(screen current);

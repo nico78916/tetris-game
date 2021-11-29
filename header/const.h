@@ -4,7 +4,7 @@
 #define MAX_SCREEN_WIDTH 1920
 #define MAX_SCREEN_HEIGHT 1080
 
-#define MAX_BUTTON 10
+#define MAX_BUTTON 15
 
 #define MAX_STR 64
 
@@ -32,7 +32,7 @@ int resolution_16_9_l[NB_RESOLUTION];
 
 const char* convertions[CONVERT];
 
-typedef enum {MENU,OPTIONS,GAME,NEWGAME,LOAD,PSEUDO}screen_id;
+typedef enum {MENU,OPTIONS,GAME,NEWGAME,LOAD,PSEUDO,OVER}screen_id;
 
 typedef struct {
     int x,y,width,height;
@@ -60,7 +60,7 @@ typedef struct{
     int width,height,btncount,max_width,max_height;/* La différence avec MAX_SCREEN_WIDTH c'est que cette variable prend en compte la résolution "maximale" de l'ordinateur et non du jeu */
     screen_id id;
     game jeu;
-    button* buttons;
+    button buttons[MAX_BUTTON];
     MLV_Button_state pressed;
     MLV_Button_state long_press;
 } screen;

@@ -28,7 +28,6 @@ void usage(char *nom){
 int main(int argc,char** argv){
     unsigned int mw,mh,width = DEFAULT_SCREEN_WIDTH,height = DEFAULT_SCREEN_HEIGHT;/* ils ne seront jamais négatif*/ 
     int i,count = 0,mouseX,mouseY,h,tw,th;
-    button btn[MAX_BUTTON];
     screen current;
     MLV_Button_state LastState = MLV_RELEASED;
     srand(time(NULL));
@@ -36,8 +35,6 @@ int main(int argc,char** argv){
     current.max_height = mh;
     current.max_width = mw;
     current.jeu = init_game(current.jeu);
-    
-
     if(argc > 1){
         /*On check si l'utilisateur veut quelque chose de spécial*/
         if((i=indexOf("-f",argv,argc)) != -1){
@@ -63,7 +60,6 @@ int main(int argc,char** argv){
     default_font = MLV_load_font("./ressources/default.ttf",20);
     western_font = MLV_load_font("./ressources/main_font.ttf",20);
     title_font = MLV_load_font("./ressources/main_font.ttf",50);
-    current.buttons = btn;
     current.id = MENU;
     current.height = height;
     current.width = width;
@@ -74,7 +70,6 @@ int main(int argc,char** argv){
     current.jeu.x = (current.width/2 - (current.jeu.width)/2);
     current.jeu.y = height/100;
     gen_blocks(current.jeu.figures[0].blocks);
-    srand(time(NULL));
 	current.jeu.figures[0].x = current.jeu.x + (rand() % (current.jeu.x + current.jeu.width)) - current.jeu.case_size/2;
     current.jeu.figures[0].y = 0;
     while(1){/* Entrer dans la boucle principale */
@@ -83,7 +78,7 @@ int main(int argc,char** argv){
         	/* ON UPDATE L'ARRIERE PLAN */
         	if(count == 29){
 				gen_blocks(current.jeu.figures[0].blocks);
-				
+
 				current.jeu.figures[0].x = current.jeu.x + (rand() % (current.jeu.x + current.jeu.width)) - current.jeu.case_size/2;
 				current.jeu.figures[0].y = 0;
         	}
@@ -95,12 +90,12 @@ int main(int argc,char** argv){
         }
         
         for(i=0;i<current.btncount;i++){
-            MLV_draw_text_box_with_font(btn[i].x,btn[i].y,btn[i].width,btn[i].height,btn[i].label,default_font,20,MLV_COLOR_WHITE,MLV_COLOR_BLACK,MLV_COLOR_GREY,MLV_TEXT_CENTER,MLV_HORIZONTAL_CENTER,MLV_VERTICAL_CENTER); 
+            MLV_draw_text_box_with_font(current.buttons[i].x,current.buttons[i].y,current.buttons[i].width,current.buttons[i].height,current.buttons[i].label,default_font,20,MLV_COLOR_WHITE,MLV_COLOR_BLACK,MLV_COLOR_GREY,MLV_TEXT_CENTER,MLV_HORIZONTAL_CENTER,MLV_VERTICAL_CENTER); 
         }
         MLV_get_mouse_position(&mouseX,&mouseY);
-        h = get_hovered_button(btn,mouseX,mouseY,current.btncount);
+        h = get_hovered_button(current.buttons,mouseX,mouseY,current.btncount);
         if(h != -1){
-            MLV_draw_text_box_with_font(btn[h].x,btn[h].y,btn[h].width,btn[h].height,btn[h].label,default_font,20,MLV_COLOR_WHITE,MLV_COLOR_WHITE,MLV_COLOR_BLACK,MLV_TEXT_CENTER,MLV_HORIZONTAL_CENTER,MLV_VERTICAL_CENTER);
+            MLV_draw_text_box_with_font(current.buttons[h].x,current.buttons[h].y,current.buttons[h].width,current.buttons[h].height,current.buttons[h].label,default_font,20,MLV_COLOR_WHITE,MLV_COLOR_WHITE,MLV_COLOR_BLACK,MLV_TEXT_CENTER,MLV_HORIZONTAL_CENTER,MLV_VERTICAL_CENTER);
         }
         if(MLV_get_mouse_button_state(MLV_BUTTON_LEFT) == MLV_PRESSED){
             if(LastState == MLV_RELEASED){

@@ -3,6 +3,7 @@
 #include "../header/const.h"
 #include "../header/graphics.h"
 #include "../header/save.h"
+#include "../header/game.h"
 
 void quit_game(screen current){
     print("Quitting the game");
@@ -69,9 +70,26 @@ void on_click_ng(screen* current,int h){
         *current = gen_menu(*current);
         break;
     case 0:
+        current->jeu = init_game(current->jeu);
         *current = gen_game(*current);
         break;
     default:
+        return_menu(current);
+        break;
+    }
+}
+
+void on_click_load(screen* current,int h){
+    printf("update.c    on_click_ng\n");
+    switch (h)
+    {
+    case 5:
+        print("Returning to menu");
+        *current = gen_menu(*current);
+        break;
+    default:
+        current->jeu = load_save(h+1);
+        *current = gen_game(*current);
         return_menu(current);
         break;
     }
@@ -103,6 +121,7 @@ void on_click(screen* current,int h){
         on_click_ng(current,h);
         break;
     case LOAD:
+        on_click_load(current,h);
     break;
     default:
         break;

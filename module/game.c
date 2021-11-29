@@ -4,7 +4,7 @@
 #include "../header/const.h"
 #include "../header/save.h"
 
-void copy_blocks(int src[][4],int dest[][4]){
+void copy_blocks(int src[FIGURE_SIZE][FIGURE_SIZE],int dest[FIGURE_SIZE][FIGURE_SIZE]){
     int i,j;
     printf("game.c    copy_blocks\n");
     for (i = 0; i < FIGURE_SIZE; i++)
@@ -35,7 +35,7 @@ int get_empty_figure(game g){
     return -1;
 }
 
-void transp(int dest[][FIGURE_SIZE]){
+void transp(int dest[FIGURE_SIZE][FIGURE_SIZE]){
     int src[FIGURE_SIZE][FIGURE_SIZE];
     int i, j;
     printf("game.c    transp\n");
@@ -49,7 +49,7 @@ void transp(int dest[][FIGURE_SIZE]){
     }
 }
 
-void reverse_row(int dest[][FIGURE_SIZE]){
+void reverse_row(int dest[FIGURE_SIZE][FIGURE_SIZE]){
     int i, j;
     int src[FIGURE_SIZE][FIGURE_SIZE];
     printf("game.c    reverse_row\n");
@@ -63,7 +63,7 @@ void reverse_row(int dest[][FIGURE_SIZE]){
     }
 }
 
-void reverse_col(int dest[][FIGURE_SIZE]){
+void reverse_col(int dest[FIGURE_SIZE][FIGURE_SIZE]){
     int i, j;
     int src[FIGURE_SIZE][FIGURE_SIZE];
     printf("game.c    reverse_col\n");
@@ -80,7 +80,7 @@ void reverse_col(int dest[][FIGURE_SIZE]){
 /**
  * Rotation de +90°
 */
-void rot_90(int dest[][FIGURE_SIZE]){
+void rot_90(int dest[FIGURE_SIZE][FIGURE_SIZE]){
     printf("game.c    rot_90\n");
     transp(dest);
     reverse_row(dest);
@@ -89,81 +89,13 @@ void rot_90(int dest[][FIGURE_SIZE]){
 /**
  * Rotation de -90°
 */
-void rot_m90(int dest[][FIGURE_SIZE]){
+void rot_m90(int dest[FIGURE_SIZE][FIGURE_SIZE]){
     printf("game.c    rot_m90\n");
     transp(dest);
     reverse_col(dest);
 }
 
-void gen_blocks(int block[][FIGURE_SIZE]){
-    int i,rnd;
-    int figs[9][4][4] = {
-        {
-            {0,0,0,0},
-            {0,1,1,0},
-            {0,1,1,0},
-            {0,0,0,0}
-        },
-        {
-            {0,0,0,0},
-            {0,0,1,0},
-            {0,1,1,1},
-            {0,0,0,0}
-        },
-        {
-            {0,0,0,0},
-            {0,1,0,0},
-            {0,1,1,0},
-            {0,0,0,0}
-        },
-        {
-            {0,0,0,0},
-            {1,1,0,0},
-            {0,1,1,0},
-            {0,0,0,0}
-        },
-        {
-            {0,0,0,0},
-            {0,1,0,0},
-            {0,1,0,0},
-            {0,1,1,0}
-        },
-        {
-            {0,1,0,0},
-            {0,1,0,0},
-            {0,1,0,0},
-            {0,1,0,0}
-        },
-        {
-            {0,0,0,0},
-            {0,1,0,0},
-            {0,1,0,0},
-            {0,1,0,0}
-        },
-        {
-            {0,0,0,0},
-            {0,0,0,0},
-            {0,1,0,0},
-            {0,1,0,0}
-        },
-        {
-            {1,1,1,0},
-            {1,1,1,0},
-            {1,1,1,0},
-            {0,0,0,0}
-        },
-
-    };
-    printf("game.c    gen_blocks\n");
-    rnd = rand() % 9;
-    copy_blocks(figs[rnd],block);
-    rnd = rand() % 4;
-    for(i = 0; i < rnd;i++){
-        rot_90(block);
-    }
-}
-
-void print_blocks(int mat[][4])
+void print_blocks(int mat[FIGURE_SIZE][FIGURE_SIZE])
 {
     int i, j;
     printf("game.c    print_blocks\n");
@@ -172,11 +104,115 @@ void print_blocks(int mat[][4])
     {
         for (j = 0; j < FIGURE_SIZE; j++)
         {
-            printf("%d",mat[i][j]);
+            printf(" %d ",mat[i][j]);
         }
         print(" ");
     }
     print("------------------------------");
+}
+
+void gen_blocks(int block[FIGURE_SIZE][FIGURE_SIZE]){
+    int i,j,rnd,x,y,lastrnd = -1;
+    printf("game.c    gen_blocks\n");
+    rnd = rand() % 5 + 1;
+    for(i=0;i<FIGURE_SIZE;i++)
+      for(j=0;j<FIGURE_SIZE;j++)
+        block[i][j] = 0;
+    /*
+      Algo :
+      On démarre au centre de la matrice (x = y = FIGURE_SIZE / 2)
+      Tant que i < rnd :
+        on met à 1 les coords
+        puis on tire une direction aléatoire
+        puis on met a jour x et y en fonction de cette direction
+      fin tant que
+      */
+    x = FIGURE_SIZE/2;
+    y = x;
+      for(i= 0;i< rnd;i++){
+        block[x][y] = 1;
+        j = rand() % 4;
+        while(j == lastrnd){
+          j = rand() % 4;
+        }
+        lastrnd = (j * -1) %4;
+        switch (j)
+        {
+        case 0:
+          /* Droite */
+          x ++;
+          break;
+        case 1:
+          /* Gauche */
+          x--;
+          break;
+        case 2:
+          /* Haut */
+          y--;
+          break;
+        
+        default:
+          y++;
+          /* Bas */
+          break;
+        }
+        if(x > FIGURE_SIZE){
+          j = 0;
+          while(block[j][y] == 0){
+            j++;
+          }
+          j--;
+          if(j == -1){
+            x = FIGURE_SIZE/2;
+            continue; /* On passe au suivant car la ligne est pleine */
+          }
+          x = j;
+          block[x][y] = 1;
+        }
+        if(x < 0){
+          j = FIGURE_SIZE-1;
+          while(block[j][y] == 0){
+            j--;
+          }
+          j++;
+          if(j == FIGURE_SIZE){
+            x = FIGURE_SIZE/2;
+            continue; /* On passe au suivant car la ligne est pleine */
+          }
+          x = j;
+          block[x][y] = 1;
+        }
+        if(y > FIGURE_SIZE){
+          j = 0;
+          while(block[x][j] == 0){
+            j++;
+          }
+          j--;
+          if(j == -1){
+            y = FIGURE_SIZE/2;
+            continue; /* On passe au suivant car la ligne est pleine */
+          }
+          y = j;
+          block[x][y] = 1;
+        }
+        if(y < 0){
+          j = FIGURE_SIZE - 1;
+          while(block[x][j] == 0){
+            j--;
+          }
+          j++;
+          if(j == FIGURE_SIZE){
+            y = FIGURE_SIZE/2;
+            continue; /* On passe au suivant car la ligne est pleine */
+          }
+          y = j;
+          block[x][y] = 1;
+        }
+      }
+    rnd = rand() % 4;
+    for(i = 0; i < rnd;i++){
+        rot_90(block);
+    }
 }
 
 void next_turn(game g){
@@ -190,11 +226,15 @@ void next_turn(game g){
 }
 
 game init_game(game g){
-    int i;
+    int i,j;
     printf("game.c    init_game\n");
     g.case_size = 0;
     for(i = 0;i < MAX_FIGURES;i++){
         gen_blocks(g.figures[i].blocks);
+    }
+    for(i = 0; i<NB_LINES;i++)
+    for(j=0;j<NB_COLS;j++){
+      g.grid[i][j] = 0;
     }
     return g;
 }
