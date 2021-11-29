@@ -72,6 +72,7 @@ void on_click_ng(screen* current,int h){
     case 0:
         current->jeu = init_game(current->jeu);
         *current = gen_game(*current);
+        *current = gen_over(*current);
         break;
     default:
         return_menu(current);
@@ -86,6 +87,21 @@ void on_click_load(screen* current,int h){
     case 5:
         print("Returning to menu");
         *current = gen_menu(*current);
+        break;
+    default:
+        current->jeu = load_save(h+1);
+        *current = gen_game(*current);
+        return_menu(current);
+        break;
+    }
+}
+
+void on_click_over(screen* current,int h){
+    printf("update.c    on_click_ng\n");
+    switch (h)
+    {
+    case 0:
+        *current = gen_pseudo(*current);
         break;
     default:
         current->jeu = load_save(h+1);
@@ -122,6 +138,8 @@ void on_click(screen* current,int h){
         break;
     case LOAD:
         on_click_load(current,h);
+    case OVER:
+        on_click_over(current,h);
     break;
     default:
         break;

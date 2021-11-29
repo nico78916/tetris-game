@@ -30,6 +30,8 @@ screen gen_option(screen current);
 */
 screen gen_newgame(screen current);
 
+screen gen_over(screen current);
+
 /**
  * Génère l'écran de jeu à partir de current
  * @param current l'écran avec les données de résolution

@@ -546,7 +546,7 @@ screen gen_game(screen current)
 
       if(MLV_get_keyboard_state(MLV_KEYBOARD_LALT) == MLV_PRESSED 
     && MLV_get_keyboard_state(MLV_KEYBOARD_END) == MLV_PRESSED){/* Raccourci pour arrêter le jeux */
-      return gen_over(current);
+      return current;
     }
 
       /*vérifier que le coup est valide et le faire le cas échéant*/
@@ -625,7 +625,7 @@ screen gen_game(screen current)
   }
   current.id = GAME;
   current.jeu = current.jeu;
-  return gen_over(current);
+  return current;
 }
 
 screen gen_newgame(screen current)
