@@ -30,3 +30,5 @@ game load_save(int slot);
  * Enregistre les données de jeux
 */
 void write_save(game g);
+
+void get_scoreboard(char* names[10],int scores[10]);

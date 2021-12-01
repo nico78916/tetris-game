@@ -153,3 +153,19 @@ void write_save(game g){
     fprintf(save,"%d\nm\n%sb\n%s", g.players[0].score,str,fig);
     fclose(save);
 }
+
+void get_scoreboard(char* names[10],int scores[10]){
+    FILE * save;
+    int i =0;
+    save = fopen( "./save/scoreboard.txt", "r" );
+    if ( save == NULL ) {
+        print( "La sauvegarde est corrompu ou inaccessible");
+        return;
+    }
+    while(fscanf(save,"%s %d\n",names[i],scores[i]) == 2){
+        if(i < 9){
+            i++;
+        }
+    }
+    fclose(save);
+}

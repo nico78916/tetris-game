@@ -2,6 +2,7 @@
 #include "../header/api.h"
 #include "../header/const.h"
 #include "../header/game.h"
+#include "../header/save.h"
 
 void prompt(screen cur, char *message, int display_time)
 {
@@ -371,14 +372,21 @@ Avec SCORE et autre stats
 
 screen gen_over(screen current)
 {
-  int a, b, d, e;
+  int a, b, d, e,i;
+  char score[256];
+  char* names[10];
+  int scores[10];
   button c;
+  get_scoreboard(names,scores);
+  for(i=0;i<10;i++){
+    printf("%s %d",names[i],scores[i]);
+  }
+  sprintf(score,"SCORE : %d",current.jeu.players[0].score);
   MLV_get_size_of_text_with_font("GAME OVER", &a, &b, title_font);
   MLV_draw_text_with_font(current.width / 2 - a / 2, b, "GAME OVER", title_font, MLV_COLOR_WHITE);
 
-  MLV_get_size_of_text_with_font("SCORE : 99999999999", &d, &e, title_font);
-  MLV_draw_text_with_font(current.width / 2 - d/2, b*2 + e, "SCORE: 99999999999", title_font, MLV_COLOR_WHITE);
-
+  MLV_get_size_of_text_with_font(score, &d, &e, default_font);
+  MLV_draw_text_with_font(current.width / 2 - d/2, b*2 + e, score, default_font, MLV_COLOR_WHITE);
   MLV_draw_text_box_with_font(current.width / 4, current.height - current.height/8, current.width / 2, current.height / 16, "ENTRER MON PSEUDO", default_font, 20, MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
   c.height = current.height / 16;
   c.width = current.width / 2;
