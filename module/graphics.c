@@ -440,7 +440,7 @@ void draw_figure(figure fig, int case_size)
 
 screen gen_game(screen current)
 {
-  int height, i, j, finw = 0, count = 0, rnd, couleur, mouv_x, mouv_y;
+  int height, i, j, finw = 0, count = 0, rnd, couleur, compteur, mouv_x, mouv_y, bloqueencours[FIGURE_SIZE][FIGURE_SIZE];
   char *label = "PAUSE";
   button b;
   figure figure[MAX_FIGURES];
@@ -498,7 +498,7 @@ screen gen_game(screen current)
       printf("\n");
     }
     for (i = 0; i < FIGURE_SIZE; i++)
-    { /*la grilfor(i=0;i<NB_COLS;i++){
+       {/*la grilfor(i=0;i<NB_COLS;i++){
 	  for(j=0;j<NB_LINES;j++){
 	    if(current.jeu.grid[j][i] != 0){
 	      couleur = current.jeu.grid[j][i];
@@ -506,13 +506,16 @@ screen gen_game(screen current)
 	    }
 	  }
 	}le prend le bloque*/
-      for (j = 0; j < FIGURE_SIZE; j++)
-      {
-        current.jeu.grid[i][j + 5] = figure[0].blocks[i][j];
+    for (j = 0; j < FIGURE_SIZE; j++)
+       {/*création du bloque*//*appeler gen_ligne*/
+    bloqueencours[i][j] = figure[0].blocks[i][j];
       }
     }
+    compteur = 0;
     mouv_x = 0;
     mouv_y = 5;
+    current.jeu = gen_ligne(current.jeu, bloqueencours, compteur, mouv_y);
+    compteur += 1;
     for (i = 1; i < MAX_FIGURES; i++)
     { /*les bloques dans la fille sont décallés*/
       figure[i - 1] = figure[i];
@@ -522,7 +525,7 @@ screen gen_game(screen current)
     while (finw == 0)
     { /*boucle qui fait tomber le bloque et attend les instructions*/
       /*penser à mettre un reset buffer*/
-      MLV_actualise_window();
+      /*MLV_actualise_window();*/
       MLV_wait_milliseconds(200);
       MLV_get_keyboard_state(MLV_KEYBOARD_DOWN);
       if (count >= 4)
@@ -532,6 +535,8 @@ screen gen_game(screen current)
           current.jeu = descente(current.jeu); /*si atente d'une seconde, le bloque tombe, modification de la grille*/
           count = 0;
 	  mouv_x += 1;
+	  current.jeu = gen_ligne(current.jeu, bloqueencours, compteur, mouv_y);
+	  compteur += 1;
         }
       }
       else if (count >= 2 && MLV_get_keyboard_state(MLV_KEYBOARD_DOWN) == MLV_PRESSED)
@@ -540,7 +545,9 @@ screen gen_game(screen current)
         {
           current.jeu = descente(current.jeu);
           count = 0;
-	   mouv_x += 1;
+          mouv_x += 1;
+	  current.jeu = gen_ligne(current.jeu, bloqueencours, compteur, mouv_y);
+	  compteur += 1;
         }
       }
 
@@ -552,14 +559,15 @@ screen gen_game(screen current)
       /*vérifier que le coup est valide et le faire le cas échéant*/
       if (MLV_get_keyboard_state(MLV_KEYBOARD_LEFT) == MLV_PRESSED)
       { /*si flèche gauche, mouvement à gauche*/
-        current.jeu = mouv_gauche(current.jeu);
+        current.jeu = mouv_gauche(current.jeu, mouv_y);
 	mouv_y -= 1;
       }
       else if (MLV_get_keyboard_state(MLV_KEYBOARD_RIGHT) == MLV_PRESSED)
-      { /*si flèche droite, mouvement à droite*/
-        current.jeu = mouv_droite(current.jeu);
-	mouv_y += 1;
-      } else if (MLV_get_keyboard_state(MLV_KEYBOARD_UP) == MLV_PRESSED)
+	  { /*si flèche droite, mouvement à droite*/
+	    current.jeu = mouv_droite(current.jeu, compteur, mouv_y);
+	    mouv_y += 1;
+	  }
+      else if (MLV_get_keyboard_state(MLV_KEYBOARD_UP) == MLV_PRESSED && compteur > 3)
       { /*si flèche droite, mouvement à droite*/
         current.jeu = mouv_rot(current.jeu, mouv_x, mouv_y);
       }
@@ -619,12 +627,15 @@ screen gen_game(screen current)
     /*le bloque est descendu en bas, appel fonction pour vérifier si ligne complète et donc effacer*/
     /*appel de la fonction pour vérifier si le jeu est fini et recommence au premier while*/
   }
+  printf("est_fini1\n");
   for (i = 0; i < MAX_FIGURES; i++)
   {
     current.jeu.figures[i] = figure[i];
   }
+  printf("est_fini2\n");
   current.id = GAME;
   current.jeu = current.jeu;
+  printf("est_fini3\n");
   return current;
 }
 

@@ -75,12 +75,14 @@ int verif_jeufini(game g);
 
 game descente(game g);
 
-game mouv_droite(game g);
+game mouv_droite(game g, int compteur, int y);
 
-game mouv_gauche(game g);
+game mouv_gauche(game g, int y);
 
 game mouv_rot(game g, int x, int y);
 
 game fixer_bloque(game g);
 
 void init_code_couleur(code_couleur c[MAX_COLOR]);
+
+game gen_ligne(game g, int bloque[FIGURE_SIZE][FIGURE_SIZE], int compteur, int y);
