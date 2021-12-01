@@ -334,7 +334,7 @@ game descente(game g){
   return g;
 }
 
-game mouv_gauche(game g){
+game mouv_gauche(game g, int y){
   int i, j;
   printf("game.c    mouv_gauche\n");
   for(i=0;i<NB_LINES;i++){
@@ -342,6 +342,9 @@ game mouv_gauche(game g){
       printf("0 ");
       return g;
     }
+  }
+  if(y == 0){
+    return g;
   }
   for(i=0;i<NB_LINES;i++){
     for(j=1;j<NB_COLS;j++){
@@ -363,7 +366,7 @@ game mouv_gauche(game g){
   return g;
 }
 
-game mouv_droite(game g){
+game mouv_droite(game g, int compteur, int y){
   int i, j;
   printf("game.c    mouv_droite\n");
   for(i=0;i<NB_LINES;i++){
@@ -377,6 +380,9 @@ game mouv_droite(game g){
 	return g;
       }
     }
+  }
+  if(y + FIGURE_SIZE - 1 >= NB_COLS && compteur < FIGURE_SIZE){
+    return g;
   }
   for(j=NB_COLS-2;j>=0;j--){
     for(i=0;i<NB_LINES;i++){
@@ -393,6 +399,16 @@ game mouv_rot(game g, int x, int y){
   int i, j;
   int figure[FIGURE_SIZE][FIGURE_SIZE], figure2[FIGURE_SIZE][FIGURE_SIZE];
   printf("game.c    mouv_rot\n");
+  x -= 3;
+  if(x < 0){
+    return g;
+  }
+  if(y <= 0){
+    return g;
+  }
+  if(y > NB_COLS - 4){
+    return g;
+  }
   for(i=0;i<FIGURE_SIZE;i++){
     for(j=0;j<FIGURE_SIZE;j++){
       figure[i][j] = g.grid[i+x][j+y];
@@ -413,11 +429,14 @@ game mouv_rot(game g, int x, int y){
   for(i=0;i<FIGURE_SIZE;i++){
     for(j=0;j<FIGURE_SIZE;j++){
       g.grid[i+x][j+y] = figure[i][j];
+      if(figure2[i][j] > 0 && figure2[i][j] <= (MAX_COLOR-1)/2){
+	g.grid[i+x][j+y] = figure2[i][j];
+      }
     }
   }
   return g;
 }
-	
+
 game fixer_bloque(game g){
   int i, j;
   for(i=0;i<NB_LINES;i++){
@@ -452,4 +471,20 @@ void init_code_couleur(code_couleur c[MAX_COLOR]){
     c[18].color = MLV_COLOR_VIOLET;
     c[19].color = MLV_COLOR_DARK_BLUE;
     c[20].color = MLV_COLOR_DARKRED;
+}
+
+game gen_ligne(game g, int bloque[FIGURE_SIZE][FIGURE_SIZE], int compteur, int y){
+  int j;
+  printf("game.c    gen_ligne\n");
+  if(compteur > 3){
+    return g;
+  }
+  print_blocks(bloque);
+  printf("%d\n", compteur);
+  for(j=0;j<FIGURE_SIZE;j++){
+    g.grid[0][j+y] = bloque[FIGURE_SIZE-1-compteur][j];
+    printf("%d ", g.grid[0][j+y]);
+  }
+  printf("\n");
+  return g;
 }
