@@ -156,16 +156,20 @@ void write_save(game g){
 
 void get_scoreboard(char* names[10],int scores[10]){
     FILE * save;
-    int i =0;
+    int i = 0;
+    char a[64];
+    int b;
     save = fopen( "./save/scoreboard.txt", "r" );
     if ( save == NULL ) {
         print( "La sauvegarde est corrompu ou inaccessible");
         return;
     }
-    while(fscanf(save,"%s %d\n",names[i],scores[i]) == 2){
-        if(i < 9){
-            i++;
-        }
+    while(fscanf(save,"%s\n%d",a,&b) == 2 && i < 10){
+        printf("%s %d %d\n",a,b,i);
+        names[i] = a;
+        scores[i] = b;
+        i++;
     }
+    print("TEST");
     fclose(save);
 }
