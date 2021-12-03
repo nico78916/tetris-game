@@ -16,7 +16,7 @@ void prompt(screen cur, char *message, int display_time)
 
 /**
  * @return retourne l'index du bouton en cas de réussite ou -1 en cas d'échec
-*/
+ */
 int get_hovered_button(button *bts, int x, int y, int btn_size)
 {
   int bx, by, bw, bh;
@@ -38,7 +38,7 @@ int get_hovered_button(button *bts, int x, int y, int btn_size)
 
 /**
  * @param str de taille 21 EXACTEMENT
-*/
+ */
 void get_screen_resolution_text(screen current, char *str)
 {
   char res[12] = "RESOLUTION ", stw[5], sth[5]; /* 21 = nb caracteres possible pour un long int */
@@ -137,10 +137,10 @@ screen gen_option(screen current)
   return current;
 }
 
-/* 
+/*
 Génère le menu pour entrer son pseudo
 La raison qui m'a pousser à ne pas utiliser MLV_input, c'est avant tout car je n'ai pas tout de suite
-imaginer comment allier la souris les flèche ainsi que le clavier ensuite j'avais envie d'implémenter 
+imaginer comment allier la souris les flèche ainsi que le clavier ensuite j'avais envie d'implémenter
 cette fonctionalité à ma manière
 */
 screen gen_pseudo(screen current)
@@ -315,7 +315,7 @@ screen gen_pseudo(screen current)
         cooldown = 10;
       }
     }
-    if (MLV_get_keyboard_state(MLV_KEYBOARD_RETURN) == MLV_PRESSED)
+    if (MLV_get_keyboard_state(MLV_KEYBOARD_RETURN) == MLV_PRESSED || MLV_get_mouse_button_state(MLV_BUTTON_LEFT) == MLV_PRESSED)
     {
       if (cooldown <= 0)
       {
@@ -372,27 +372,28 @@ Avec SCORE et autre stats
 
 screen gen_over(screen current)
 {
-  int a, b, d, e,i;
+  int a, b, d, e, i;
   char score[256];
-  char* names[10];
+  char *names[10];
   int scores[10];
   button c;
-  get_scoreboard(names,scores);
-  for(i=0;i<10;i++){
-    printf("%s %d",names[i],scores[i]);
+  get_scoreboard(names, scores);
+  for (i = 0; i < 10; i++)
+  {
+    printf("%s %d", names[i], scores[i]);
   }
-  sprintf(score,"SCORE : %d",current.jeu.players[0].score);
+  sprintf(score, "SCORE : %d", current.jeu.players[0].score);
   MLV_get_size_of_text_with_font("GAME OVER", &a, &b, title_font);
   MLV_draw_text_with_font(current.width / 2 - a / 2, b, "GAME OVER", title_font, MLV_COLOR_WHITE);
 
   MLV_get_size_of_text_with_font(score, &d, &e, default_font);
-  MLV_draw_text_with_font(current.width / 2 - d/2, b*2 + e, score, default_font, MLV_COLOR_WHITE);
-  MLV_draw_text_box_with_font(current.width / 4, current.height - current.height/8, current.width / 2, current.height / 16, "ENTRER MON PSEUDO", default_font, 20, MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
+  MLV_draw_text_with_font(current.width / 2 - d / 2, b * 2 + e, score, default_font, MLV_COLOR_WHITE);
+  MLV_draw_text_box_with_font(current.width / 4, current.height - current.height / 8, current.width / 2, current.height / 16, "ENTRER MON PSEUDO", default_font, 20, MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
   c.height = current.height / 16;
   c.width = current.width / 2;
   c.label = "ENTRER MON PSEUDO";
   c.x = current.width / 4;
-  c.y = current.height - current.height/8;
+  c.y = current.height - current.height / 8;
   current.btncount = 1;
   current.buttons[0] = c;
   current.id = OVER;
@@ -446,12 +447,24 @@ void draw_figure(figure fig, int case_size)
   }
 }
 
+void print_block(int blocks[FIGURE_SIZE][FIGURE_SIZE])
+{
+  int i, j;
+  for (i = 0; i < FIGURE_SIZE; i++)
+  {
+    for (j = 0; j < FIGURE_SIZE; j++)
+    {
+      printf("%d ", blocks[i][j]);
+    }
+    printf("\n");
+  }
+}
+
 screen gen_game(screen current)
 {
   int height, i, j, finw = 0, count = 0, rnd, couleur, compteur, mouv_x, mouv_y, bloqueencours[FIGURE_SIZE][FIGURE_SIZE];
   char *label = "PAUSE";
   button b;
-  figure figure[MAX_FIGURES];
   code_couleur code_couleur[MAX_COLOR];
   init_code_couleur(code_couleur);
   printf("graphics.c    gen_game\n");
@@ -462,7 +475,7 @@ screen gen_game(screen current)
   b.height = current.height / 1;
   b.width = current.width / 10;
   b.x = current.width - current.width / 10;
-  b.y = current.height /5;
+  b.y = current.height / 5;
   b.label = label;
   current.buttons[0] = b;
   height = current.height;
@@ -479,62 +492,37 @@ screen gen_game(screen current)
   /*penser à ajouter time.h*/
   for (i = 0; i < MAX_FIGURES; i++)
   { /*génération des 5 premiers bloques*/
-    gen_blocks(figure[i].blocks);
+    gen_blocks(current.jeu.figures[i].blocks);
   }
   MLV_actualise_window();
+  MLV_change_frame_rate(20);
   while (est_fini(current.jeu) == 0)
-  {    
-                           /*boucle du jeu*/
-    rnd = (rand() % 10) + 11; /*pour la couleur*/
-    printf("%d\n", rnd);
+  {
+    set_colors(current.jeu.figures[0].blocks);
+    print_block(current.jeu.figures[0].blocks);
     for (i = 0; i < FIGURE_SIZE; i++)
     {
       for (j = 0; j < FIGURE_SIZE; j++)
-      {
-        if (figure[0].blocks[i][j] == 1)
-        {
-          figure[0].blocks[i][j] = rnd;
-        }
-      }
-    }
-    for (i = 0; i < FIGURE_SIZE; i++)
-    {
-      for (j = 0; j < FIGURE_SIZE; j++)
-      {
-        printf("%d ", figure[0].blocks[i][j]);
-      }
-      printf("\n");
-    }
-    for (i = 0; i < FIGURE_SIZE; i++)
-       {/*la grilfor(i=0;i<NB_COLS;i++){
-	  for(j=0;j<NB_LINES;j++){
-	    if(current.jeu.grid[j][i] != 0){
-	      couleur = current.jeu.grid[j][i];
-	      MLV_draw_filled_rectangle((current.width/4 - (NB_COLS*current.jeu.case_size)/2) + i * current.jeu.case_size,height/100 + j * current.jeu.case_size,current.jeu.case_size,current.jeu.case_size,code_couleur[couleur].color);
-	    }
-	  }
-	}le prend le bloque*/
-    for (j = 0; j < FIGURE_SIZE; j++)
-       {/*création du bloque*//*appeler gen_ligne*/
-    bloqueencours[i][j] = figure[0].blocks[i][j];
+      { /*création du bloque*/ /*appeler gen_ligne*/
+        bloqueencours[i][j] = current.jeu.figures[0].blocks[i][j];
       }
     }
     compteur = 0;
     mouv_x = 0;
     mouv_y = 5;
-    current.jeu = gen_ligne(current.jeu, bloqueencours, compteur, mouv_y);
+    gen_ligne(current.jeu.grid, bloqueencours, compteur, mouv_y);
     compteur += 1;
     for (i = 1; i < MAX_FIGURES; i++)
     { /*les bloques dans la fille sont décallés*/
-      figure[i - 1] = figure[i];
+      current.jeu.figures[i - 1] = current.jeu.figures[i];
     }
-    gen_blocks(figure[4].blocks); /*généré nouveau bloque dans file d'attente*/
+    gen_blocks(current.jeu.figures[MAX_FIGURES - 1].blocks); /*généré nouveau bloque dans file d'attente*/
     /*ajouter un appel de fonction mlv qui matérialise le block*/
     while (finw == 0)
     { /*boucle qui fait tomber le bloque et attend les instructions*/
       /*penser à mettre un reset buffer*/
       /*MLV_actualise_window();*/
-      MLV_wait_milliseconds(200);
+      MLV_delay_according_to_frame_rate();
       MLV_get_keyboard_state(MLV_KEYBOARD_DOWN);
       if (count >= 4)
       {
@@ -542,9 +530,9 @@ screen gen_game(screen current)
         {
           current.jeu = descente(current.jeu); /*si atente d'une seconde, le bloque tombe, modification de la grille*/
           count = 0;
-	  mouv_x += 1;
-	  current.jeu = gen_ligne(current.jeu, bloqueencours, compteur, mouv_y);
-	  compteur += 1;
+          mouv_x += 1;
+          gen_ligne(current.jeu.grid, bloqueencours, compteur, mouv_y);
+          compteur += 1;
         }
       }
       else if (count >= 2 && MLV_get_keyboard_state(MLV_KEYBOARD_DOWN) == MLV_PRESSED)
@@ -554,27 +542,27 @@ screen gen_game(screen current)
           current.jeu = descente(current.jeu);
           count = 0;
           mouv_x += 1;
-	  current.jeu = gen_ligne(current.jeu, bloqueencours, compteur, mouv_y);
-	  compteur += 1;
+          gen_ligne(current.jeu.grid, bloqueencours, compteur, mouv_y);
+          compteur += 1;
         }
       }
 
-      if(MLV_get_keyboard_state(MLV_KEYBOARD_LALT) == MLV_PRESSED 
-    && MLV_get_keyboard_state(MLV_KEYBOARD_END) == MLV_PRESSED){/* Raccourci pour arrêter le jeux */
-      return current;
-    }
+      if (MLV_get_keyboard_state(MLV_KEYBOARD_LALT) == MLV_PRESSED && MLV_get_keyboard_state(MLV_KEYBOARD_END) == MLV_PRESSED)
+      { /* Raccourci pour arrêter le jeux */
+        return current;
+      }
 
       /*vérifier que le coup est valide et le faire le cas échéant*/
       if (MLV_get_keyboard_state(MLV_KEYBOARD_LEFT) == MLV_PRESSED)
       { /*si flèche gauche, mouvement à gauche*/
         current.jeu = mouv_gauche(current.jeu, mouv_y);
-	mouv_y -= 1;
+        mouv_y -= 1;
       }
       else if (MLV_get_keyboard_state(MLV_KEYBOARD_RIGHT) == MLV_PRESSED)
-	  { /*si flèche droite, mouvement à droite*/
-	    current.jeu = mouv_droite(current.jeu, compteur, mouv_y);
-	    mouv_y += 1;
-	  }
+      { /*si flèche droite, mouvement à droite*/
+        current.jeu = mouv_droite(current.jeu, compteur, mouv_y);
+        mouv_y += 1;
+      }
       else if (MLV_get_keyboard_state(MLV_KEYBOARD_UP) == MLV_PRESSED && compteur > 3)
       { /*si flèche droite, mouvement à droite*/
         current.jeu = mouv_rot(current.jeu, mouv_x, mouv_y);
@@ -584,7 +572,7 @@ screen gen_game(screen current)
         printf("insérer une fonction pour la pause (appuie sur p, pause ou echap)\n");
         MLV_save_screen();
         MLV_clear_window(MLV_COLOR_BLACK);
-	gen_pause(current);
+        gen_pause(current);
         MLV_load_screen();
         MLV_actualise_window();
         /*MLV_create_window("Pause", "Pause", 400, 200);*/
@@ -638,7 +626,7 @@ screen gen_game(screen current)
   printf("est_fini1\n");
   for (i = 0; i < MAX_FIGURES; i++)
   {
-    current.jeu.figures[i] = figure[i];
+    current.jeu.figures[i] = current.jeu.figures[i];
   }
   printf("est_fini2\n");
   current.id = GAME;

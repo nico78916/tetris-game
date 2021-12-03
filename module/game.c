@@ -297,18 +297,6 @@ game verif_lignecomplete(game g){	/*pour chaque ligne, vérifie si la première 
   return g;
 }
 
-/*void ligne_complete(game g, int verif[NB_LINES]){efface une ligne complète
-    int i, j;
-  printf("game.c    ligne_complete\n");
-  for(i=0;i<NB_LINES;i++){
-    if(verif[i]==1){
-      for(j=0;j<NB_COLS;j++){
-	g.grid[i][j] = 0;
-      }
-    }
-  }
-}*/
-
 int verif_jeufini(game g){
   int i;
   printf("game.c    verif_jeufini\n");
@@ -332,6 +320,21 @@ game descente(game g){
     }
   }
   return g;
+}
+
+void set_colors(int blocks[FIGURE_SIZE][FIGURE_SIZE]){
+  int rnd,i,j;
+    rnd = (rand() % 10) + 11; /*pour la couleur*/
+    for (i = 0; i < FIGURE_SIZE; i++)
+    {
+      for (j = 0; j < FIGURE_SIZE; j++)
+      {
+        if (blocks[i][j] == 1)
+        {
+          blocks[i][j] = rnd;
+        }
+      }
+    }
 }
 
 game mouv_gauche(game g, int y){
@@ -363,6 +366,7 @@ game mouv_gauche(game g, int y){
     }
   }
   printf("2\n");
+  print("FIN DE LA FONCTION");
   return g;
 }
 
@@ -473,18 +477,17 @@ void init_code_couleur(code_couleur c[MAX_COLOR]){
     c[20].color = MLV_COLOR_DARKRED;
 }
 
-game gen_ligne(game g, int bloque[FIGURE_SIZE][FIGURE_SIZE], int compteur, int y){
+void gen_ligne(int grid[NB_LINES][NB_COLS], int bloque[FIGURE_SIZE][FIGURE_SIZE], int compteur, int y){
   int j;
   printf("game.c    gen_ligne\n");
   if(compteur > 3){
-    return g;
+    return;
   }
   print_blocks(bloque);
   printf("%d\n", compteur);
   for(j=0;j<FIGURE_SIZE;j++){
-    g.grid[0][j+y] = bloque[FIGURE_SIZE-1-compteur][j];
-    printf("%d ", g.grid[0][j+y]);
+    grid[0][j+y] = bloque[FIGURE_SIZE-1-compteur][j];
+    printf("%d ", grid[0][j+y]);
   }
   printf("\n");
-  return g;
 }

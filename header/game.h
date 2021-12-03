@@ -85,4 +85,6 @@ game fixer_bloque(game g);
 
 void init_code_couleur(code_couleur c[MAX_COLOR]);
 
-game gen_ligne(game g, int bloque[FIGURE_SIZE][FIGURE_SIZE], int compteur, int y);
+void gen_ligne(int grid[NB_LINES][NB_COLS], int bloque[FIGURE_SIZE][FIGURE_SIZE], int compteur, int y);
+
+void set_colors(int blocks[FIGURE_SIZE][FIGURE_SIZE]);

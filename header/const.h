@@ -30,6 +30,8 @@
 #define STR_FIG FIGURE_SIZE*FIGURE_SIZE
 #define STR_FIGS FIGURE_SIZE * FIGURE_SIZE * MAX_FIGURES
 
+#define DEFAULT_FPS 24
+
 int resolution_16_9_w[NB_RESOLUTION];
 int resolution_16_9_l[NB_RESOLUTION];
 
