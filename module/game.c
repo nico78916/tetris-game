@@ -322,6 +322,34 @@ game descente(game g){
   return g;
 }
 
+void montee_figure(int g[FIGURE_SIZE][FIGURE_SIZE]){
+  int i, j;
+  printf("game.c    montee\n");
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(g[i][j]>(MAX_COLOR-1)/2){
+	g[i-1][j] = g[i][j];
+	g[i][j] = 0;
+      }
+    }
+  }
+  return;
+}
+
+void descente_figure(int g[FIGURE_SIZE][FIGURE_SIZE]){
+  int i, j;
+  printf("game.c    descente\n");
+  for(i=FIGURE_SIZE-1;i>=0;i--){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(g[i][j]>(MAX_COLOR-1)/2){
+	g[i+1][j] = g[i][j];
+	g[i][j] = 0;
+      }
+    }
+  }
+  return;
+}
+
 void set_colors(int blocks[FIGURE_SIZE][FIGURE_SIZE]){
   int rnd,i,j;
     rnd = (rand() % 10) + 11; /*pour la couleur*/
@@ -399,20 +427,78 @@ game mouv_droite(game g, int compteur, int y){
   return g;
 }
 
-game mouv_rot(game g, int x, int y){
+void mouv_gauche_figure(int g[FIGURE_SIZE][FIGURE_SIZE]){
   int i, j;
+  printf("game.c    mouv_gauche\n");
+  for(i=0;i<FIGURE_SIZE;i++){
+    if(g[i][0] > (MAX_COLOR-1)/2){
+      printf("0 ");
+      return;
+    }
+  }
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=1;j<FIGURE_SIZE;j++){
+      if(g[i][j-1]>0 && g[i][j-1]<=(MAX_COLOR-1)/2 && g[i][j] > (MAX_COLOR-1)/2){
+	return;
+      }
+    }
+  }
+  for(j=1;j<FIGURE_SIZE;j++){
+    for(i=0;i<FIGURE_SIZE;i++){
+      if(g[i][j] > (MAX_COLOR-1)/2){
+	printf("1\n");
+	g[i][j-1] = g[i][j];
+	g[i][j] = 0;
+      }
+    }
+  }
+  printf("2\n");
+  print("FIN DE LA FONCTION");
+  return;
+}
+
+void mouv_droite_figure(int g[FIGURE_SIZE][FIGURE_SIZE]){
+  int i, j;
+  printf("game.c    mouv_droite\n");
+  for(i=0;i<FIGURE_SIZE;i++){
+    if(g[i][NB_COLS-1]>(MAX_COLOR-1)/2){
+      return;
+    }
+  }
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<NB_COLS-1;j++){
+      if(g[i][j+1]>0 && g[i][j+1]<=(MAX_COLOR-1)/2 && g[i][j] > (MAX_COLOR-1)/2){
+	return;
+      }
+    }
+  }
+  for(j=FIGURE_SIZE-2;j>=0;j--){
+    for(i=0;i<FIGURE_SIZE;i++){
+      if(g[i][j]>(MAX_COLOR-1)/2){
+	g[i][j+1] = g[i][j];
+	g[i][j] = 0;
+      }
+    }
+  }
+  return;
+}
+
+game mouv_rot(game g, int x, int y){
+  int i, j, tabx[FIGURE_SIZE] = {0}, taby[FIGURE_SIZE] = {0}, rotx[FIGURE_SIZE] = {0}, roty[FIGURE_SIZE] = {0}, tx = 0, ty = 0, rx = 0, ry = 0, cx = 0, cy = 0, crx = 0, cry = 0, decalage1 = 0, decalage2 = 0, y1, y2, count = 0;
   int figure[FIGURE_SIZE][FIGURE_SIZE], figure2[FIGURE_SIZE][FIGURE_SIZE];
   printf("game.c    mouv_rot\n");
+  y1 = y;
+  y2 = y;
   x -= 3;
   if(x < 0){
     return g;
   }
-  if(y <= 0){
+  /*if(y <= 0){
     return g;
   }
   if(y > NB_COLS - 4){
     return g;
-  }
+    }*/
   for(i=0;i<FIGURE_SIZE;i++){
     for(j=0;j<FIGURE_SIZE;j++){
       figure[i][j] = g.grid[i+x][j+y];
@@ -422,7 +508,91 @@ game mouv_rot(game g, int x, int y){
       }
     }
   }
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(figure[i][j] > (MAX_COLOR-1)/2){
+	tabx[i] = i + 1;
+	taby[j] = j + 1;
+      }
+    }
+  }
   rot_90(figure);
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(figure[i][j] > (MAX_COLOR-1)/2){
+	rotx[i] = i + 1;
+	roty[j] = j + 1;
+      }
+    }
+  }
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(tabx[i] != 0){
+	tx += tabx[i];
+	cx += 1;
+      }
+      if(taby[j] != 0){
+	ty += taby[j];
+	cy += 1;
+      }
+      if(rotx[i] != 0){
+	rx += rotx[i];
+	crx += 1;
+      }
+      if(roty[j] != 0){
+	ry += roty[j];
+	cry += 1;
+      }
+    }
+  }
+  tx = tx / cx;
+  ty = ty / cy;
+  rx = rx / crx;
+  ry = ry / cry;
+  while((tx != rx && count < 20) || (ty != ry && count < 20)){
+    if(tx<rx && rotx[0] == 0){
+      rx -= 1;
+      montee_figure(figure);
+      count += 1;
+    }else if(tx>rx && rotx[3] == 0){
+      rx += 1;
+      descente_figure(figure);
+      count += 1;
+    }
+    if(ty<ry && roty[0] == 0){
+      ry -= 1;
+      mouv_gauche_figure(figure);
+      count += 1;
+    }else if(ty>ry && roty[3] == 0){
+      ry += 1;
+      mouv_droite_figure(figure);
+      count += 1;
+    }
+  }
+  while(y1<0){
+    y1 += 1;
+    decalage1 += 1;
+    printf("%d\n", decalage1);
+  }
+  for(i=0;i<decalage1;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(figure[j][i] > (MAX_COLOR-1)/2){
+	return g;
+      }
+    }
+  }
+  while(y2>NB_COLS){
+    y2 -= 1;
+    decalage2 -= 1;
+    printf("%d\n", decalage2);
+  }
+  for(i=FIGURE_SIZE-decalage2;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(figure[j][i] > (MAX_COLOR-1)/2){
+	return g;
+      }
+    }
+  } 
   for(i=0;i<FIGURE_SIZE;i++){
     for(j=0;j<FIGURE_SIZE;j++){
       if(figure2[i][j]>0 && figure2[i][j]<=(MAX_COLOR-1)/2 && figure[i][j] != 0){

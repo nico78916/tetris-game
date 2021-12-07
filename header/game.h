@@ -75,9 +75,17 @@ int verif_jeufini(game g);
 
 game descente(game g);
 
+void montee_figure(int g[FIGURE_SIZE][FIGURE_SIZE]);
+
+void descente_figure(int g[FIGURE_SIZE][FIGURE_SIZE]);
+
 game mouv_droite(game g, int compteur, int y);
 
 game mouv_gauche(game g, int y);
+
+void mouv_gauche_figure(int g[FIGURE_SIZE][FIGURE_SIZE]);
+
+void mouv_droite_figure(int g[FIGURE_SIZE][FIGURE_SIZE]);
 
 game mouv_rot(game g, int x, int y);
 

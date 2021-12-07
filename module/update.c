@@ -11,7 +11,7 @@ void quit_game(screen current){
     MLV_free_font(western_font);
     MLV_free_font(title_font);
     MLV_stop_music();
-    MLV_free_music(current.cursong);
+    /*MLV_free_music(current.cursong);*/
     MLV_free_audio();
     MLV_free_window();
     if(current.jeu.ply_count == 1){
