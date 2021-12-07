@@ -103,7 +103,7 @@ clavier init_clavier(clavier clav,int starty,int size);
  */
 screen gen_pseudo(screen current);
 
-void gen_pause(screen current);
+screen gen_pause(screen current);
 
 void toggleSound(screen *current);
 

@@ -472,6 +472,22 @@ void print_block(int blocks[FIGURE_SIZE][FIGURE_SIZE])
   }
 }
 
+screen gen_pause(screen current)
+{
+  int width, height, bw, bh;
+  game setup;
+  printf("graphics.c    gen_pause\n");
+  setup = current.jeu;
+  width = current.width;
+  height = current.height;
+  bw = width / 2;
+  bh = height / 2;
+  MLV_draw_text_with_font(width / 2 - bw / 2, height / 2 - bw / 2, "PAUSE", title_font, MLV_COLOR_WHITE);
+  MLV_actualise_window();
+  MLV_wait_seconds(4);
+  return current;
+}
+
 screen gen_game(screen current)
 {
   int height, i, j, finw = 0, count = 0, rnd, couleur, compteur, mouv_x, mouv_y, bloqueencours[FIGURE_SIZE][FIGURE_SIZE];
@@ -791,19 +807,4 @@ void draw_game(screen current)
       MLV_draw_rectangle(setup.x + i * setup.case_size, setup.y + j * setup.case_size, setup.case_size, setup.case_size, convert_hex_to_color(convertions[setup.grid[i][j]]));
     }
   }
-}
-
-screen gen_pause(screen current)
-{
-  int width, height, bw, bh;
-  game setup;
-  printf("graphics.c    gen_pause\n");
-  setup = current.jeu;
-  width = current.width;
-  height = current.height;
-  bw = width / 2;
-  bh = height / 2;
-  MLV_draw_text_with_font(width / 2 - bw / 2, height / 2 - bw / 2, "PAUSE", title_font, MLV_COLOR_WHITE);
-  MLV_actualise_window();
-  MLV_wait_seconds(4);
 }
