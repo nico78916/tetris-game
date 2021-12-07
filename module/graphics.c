@@ -3,6 +3,7 @@
 #include "../header/const.h"
 #include "../header/game.h"
 #include "../header/save.h"
+#include "../header/update.h"
 
 void prompt(screen cur, char *message, int display_time)
 {
@@ -414,6 +415,8 @@ void draw_grid(game setup)
   {
     for (j = 0; j < NB_LINES; j++)
     {
+      
+      MLV_draw_filled_rectangle(setup.x + i * setup.case_size, setup.y + j * setup.case_size, setup.case_size, setup.case_size, MLV_COLOR_BLACK);
       MLV_draw_rectangle(setup.x + i * setup.case_size, setup.y + j * setup.case_size, setup.case_size, setup.case_size, MLV_COLOR_GREY);
     }
   }
@@ -550,7 +553,7 @@ screen gen_game(screen current)
         {
           current.jeu = descente(current.jeu);
           count = 0;
-          mouv_x += 1;
+          mouv_x += 2;
           gen_ligne(current.jeu.grid, bloqueencours, compteur, mouv_y);
           compteur += 1;
         }
@@ -559,6 +562,10 @@ screen gen_game(screen current)
       if (MLV_get_keyboard_state(MLV_KEYBOARD_LALT) == MLV_PRESSED && MLV_get_keyboard_state(MLV_KEYBOARD_END) == MLV_PRESSED)
       { /* Raccourci pour arrêter le jeux */
         return current;
+      }
+      if (MLV_get_keyboard_state(MLV_KEYBOARD_LALT) == MLV_PRESSED && MLV_get_keyboard_state(MLV_KEYBOARD_F4) == MLV_PRESSED)
+      { /* Raccourci pour arrêter le jeux */
+        quit_game();
       }
 
       /*vérifier que le coup est valide et le faire le cas échéant*/
@@ -579,14 +586,9 @@ screen gen_game(screen current)
       else if (MLV_get_keyboard_state(MLV_KEYBOARD_p) == MLV_PRESSED || MLV_get_keyboard_state(MLV_KEYBOARD_PAUSE) == MLV_PRESSED || MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED)
       {
         printf("insérer une fonction pour la pause (appuie sur p, pause ou echap)\n");
-        MLV_save_screen();
-        MLV_clear_window(MLV_COLOR_BLACK);
-        gen_pause(current);
-        MLV_load_screen();
-        MLV_actualise_window();
-        /*MLV_create_window("Pause", "Pause", 400, 200);*/
-      } /*else if(){*/ /*si boutton +, rotation à 90°, pas possible si une seule matrice*/
-
+        write_save(current.jeu);
+        return gen_pause(current);
+      }
       /*}*/
       /*à la fin de chaque while, vérifier que le bloque n'est pas déscendu en bas sinon return 1*/
       for (i = 0; i < NB_LINES; i++)
@@ -602,8 +604,8 @@ screen gen_game(screen current)
         finw = 1;
       }
       count++;
-      MLV_clear_window(MLV_COLOR_BLACK);
-      /* ON génère les blocs après la grille pour quelle soit déssiné par dessus ! */
+      /*MLV_clear_window(MLV_COLOR_BLACK);*/
+      /* ON génère les blocs après la grille pour quelle soit dessiné par dessus ! */
       draw_grid(current.jeu);
       for (i = 0; i < NB_COLS; i++)
       {
@@ -791,7 +793,7 @@ void draw_game(screen current)
   }
 }
 
-void gen_pause(screen current)
+screen gen_pause(screen current)
 {
   int width, height, bw, bh;
   game setup;

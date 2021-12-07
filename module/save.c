@@ -110,6 +110,7 @@ game load_save(int slot){
         }
     }
     thing.players[0].score = score;
+    thing.slot = slot;
     return thing;
 }
 
