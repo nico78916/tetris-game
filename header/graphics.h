@@ -76,7 +76,7 @@ void draw_grid(game setup);
 * @param fig la figure
 * @param case_size la taille des cases
 */
-void draw_figure(figure fig,int case_size);
+void draw_figure(figure fig,int case_size,int color_on);
 
 /**
 * Efface la figure donnée en fonction de la taille des cases
@@ -104,3 +104,7 @@ clavier init_clavier(clavier clav,int starty,int size);
 screen gen_pseudo(screen current);
 
 void gen_pause(screen current);
+
+void toggleSound(screen *current);
+
+void toggleColor(screen *current);

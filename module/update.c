@@ -56,6 +56,14 @@ void on_click_opts(screen* current,int h){
     case 1:
         *current = switch_widow_type(*current);
         break;
+    case 3:
+        toggleColor(current);
+        *current = gen_option(*current);
+        break;
+    case 2:
+        toggleSound(current);
+        *current = gen_option(*current);
+        break;
     case 4:
         *current = gen_menu(*current);
         break;

@@ -101,8 +101,8 @@ screen gen_option(screen current)
   {
     labels[1] = "MODE WIDOWED";
   }
-  labels[2] = "SON : OFF";
-  labels[3] = "COULEURS : OFF";
+  labels[2] = current.jeu.sound == 1 ? "SON : ON" : "SON : OFF";
+  labels[3] = current.jeu.colors == 1 ? "COULEURS : ON" : "COULEURS : OFF";
   labels[4] = "RETOUR";
   MLV_clear_window(MLV_COLOR_BLACK);
   print("[gen_option] INIT");
@@ -435,7 +435,7 @@ void erase_figure(figure fig, int case_size)
   }
 }
 
-void draw_figure(figure fig, int case_size)
+void draw_figure(figure fig, int case_size, int color_on)
 {
   int i, j;
   code_couleur code_couleur[MAX_COLOR];
@@ -446,8 +446,12 @@ void draw_figure(figure fig, int case_size)
   {
     for (j = 0; j < FIGURE_SIZE; j++)
     {
-      couleur = fig.blocks[i][j];
-      MLV_draw_filled_rectangle(fig.x + i * case_size, fig.y + j * case_size, case_size, case_size, code_couleur[couleur].color);
+      if(fig.blocks[i][j] != 0){
+        couleur = color_on == 1 ? code_couleur[fig.blocks[i][j]].color : MLV_rgba(255/fig.blocks[i][j],255/fig.blocks[i][j],255/fig.blocks[i][j],255);
+      }else{
+        couleur = MLV_COLOR_BLACK;
+      }
+      MLV_draw_filled_rectangle(fig.x + i * case_size, fig.y + j * case_size, case_size, case_size,couleur);
     }
   }
 }
@@ -705,6 +709,13 @@ screen gen_load(screen current)
   }
   current.id = LOAD;
   return current;
+}
+void toggleSound(screen *current){
+  current->jeu.sound = (current->jeu.sound + 1) %2;
+}
+
+void toggleColor(screen *current){
+  current->jeu.colors = (current->jeu.colors + 1) %2;
 }
 
 screen switch_widow_type(screen current)

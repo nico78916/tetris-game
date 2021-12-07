@@ -63,6 +63,8 @@ int main(int argc,char** argv){
     current.id = MENU;
     current.height = height;
     current.width = width;
+    current.jeu.colors = 1;
+    current.jeu.sound = 1;
     current = gen_menu(current);
     current.jeu.case_size = height/NB_LINES;
     current.jeu.width = current.jeu.case_size * NB_COLS;
@@ -83,7 +85,7 @@ int main(int argc,char** argv){
 				current.jeu.figures[0].y = 0;
         	}
         	erase_figure(current.jeu.figures[0],current.jeu.case_size);
-        	draw_figure(current.jeu.figures[0],current.jeu.case_size);
+        	draw_figure(current.jeu.figures[0],current.jeu.case_size,current.jeu.colors);
         	current.jeu.figures[0].y += current.jeu.case_size;
         	MLV_get_size_of_text_with_font("TETE RISSE",&tw,&th,title_font);
     		MLV_draw_text_with_font(width/2-tw/2,height/10-th/2,"TETE RISSE",title_font,MLV_COLOR_WHITE);
