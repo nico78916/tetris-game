@@ -59,6 +59,7 @@ typedef struct {
     int grid[NB_LINES][NB_COLS],case_size,slot,ply_count,x,y,height,width;
     figure figures[MAX_FIGURES];
     player players[MAX_PLAYERS];
+    int colors,sound;
 }game;
 
 typedef struct{
@@ -68,6 +69,7 @@ typedef struct{
     button buttons[MAX_BUTTON];
     MLV_Button_state pressed;
     MLV_Button_state long_press;
+    MLV_Music* cursong;
 } screen;
 
 typedef struct{

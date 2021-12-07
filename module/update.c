@@ -10,6 +10,9 @@ void quit_game(screen current){
     MLV_free_font(default_font);
     MLV_free_font(western_font);
     MLV_free_font(title_font);
+    MLV_stop_music();
+    MLV_free_music(current.cursong);
+    MLV_free_audio();
     MLV_free_window();
     if(current.jeu.ply_count == 1){
         write_save(current.jeu);
@@ -138,6 +141,7 @@ void on_click(screen* current,int h){
         break;
     case LOAD:
         on_click_load(current,h);
+        break;
     case OVER:
         on_click_over(current,h);
     break;
@@ -147,7 +151,6 @@ void on_click(screen* current,int h){
 }
 
 void update_seconde(screen* current){
-    /*printf("update.c    update_seconde\n");*/
-    current->id;
+    printf("update.c    update_seconde\n");
     return;
 }
