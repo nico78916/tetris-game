@@ -44,7 +44,7 @@ void print_blocks(int mat[][FIGURE_SIZE]);
  * supprime la figure 0 et décale les autres blocks
  * et genere une nouvelle figure
 */
-void next_turn(game g);
+void next_turn(screen *current);
 
 /**
  * Initialise le jeu
@@ -81,7 +81,7 @@ game mouv_gauche(game g, int y);
 
 game mouv_rot(game g, int x, int y);
 
-game fixer_bloque(game g);
+void fixer_bloque(screen *current);
 
 void init_code_couleur(code_couleur c[MAX_COLOR]);
 

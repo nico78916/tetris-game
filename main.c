@@ -15,7 +15,7 @@
 #include "./header/api.h"
 
 void usage(char *nom){
-    printf("Usage : %s [-f] [-size <longueur> <hauteur> (deux entiers supérieurs à 100)]\n",nom);
+   printf("Usage : %s [-f] [-size <longueur> <hauteur> (deux entiers supérieurs à 100)]\n",nom);
 }
 
 /**
@@ -65,6 +65,7 @@ int main(int argc,char** argv){
     current.width = width;
     current.jeu.colors = 1;
     current.jeu.sound = 1;
+    current.jeu.ply_count = 1;
     current = gen_menu(current);
     current.jeu.case_size = height/NB_LINES;
     current.jeu.width = current.jeu.case_size * NB_COLS;

@@ -1,4 +1,4 @@
-void quit_game();
+void quit_game(screen* current);
 
 void on_click_menu(screen* current);
 

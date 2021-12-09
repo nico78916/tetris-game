@@ -1,36 +1,37 @@
 #include <MLV/MLV_all.h>
+#include <time.h>
 #include "../header/api.h"
 #include "../header/const.h"
 #include "../header/graphics.h"
 #include "../header/save.h"
 #include "../header/game.h"
 
-void quit_game(screen current){
+void quit_game(screen* current){
     print("Quitting the game");
     MLV_free_font(default_font);
     MLV_free_font(western_font);
     MLV_free_font(title_font);
     MLV_stop_music();
-    MLV_free_music(current.cursong);
+    MLV_free_music(current->cursong);
     MLV_free_audio();
     MLV_free_window();
-    if(current.jeu.ply_count == 1){
-        write_save(current.jeu);
+    if(current->jeu.ply_count == 1){
+        write_save(&current->jeu);
     }
     exit(0);
 }
 
 void return_menu(screen* current){
-    printf("update.c    return_menu\n");
+   printf("update.c    return_menu\n");
     *current = gen_menu(*current);
 }
 
 void on_click_menu(screen* current,int h){
-    printf("update.c    on_click_menu\n");
+   printf("update.c    on_click_menu\n");
     switch (h)
     {
     case 4:
-        quit_game(*current);
+        quit_game(current);
         break;
     case 3:
         *current = gen_option(*current);
@@ -47,7 +48,7 @@ void on_click_menu(screen* current,int h){
 }
 
 void on_click_opts(screen* current,int h){
-    printf("update.c    on_click_opts\n");
+   printf("update.c    on_click_opts\n");
     switch (h)
     {
     case 0:
@@ -73,7 +74,7 @@ void on_click_opts(screen* current,int h){
 }
 
 void on_click_ng(screen* current,int h){
-    printf("update.c    on_click_ng\n");
+   printf("update.c    on_click_ng\n");
     switch (h)
     {
     case 4:
@@ -83,32 +84,38 @@ void on_click_ng(screen* current,int h){
     case 0:
         current->jeu = init_game(current->jeu);
         *current = gen_game(*current);
-        *current = gen_over(*current);
+        if(current->id == PAUSE){
+            *current = gen_pause(*current);
+            while(MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED) MLV_delay_according_to_frame_rate();
+        }else if(current->id == GAME){
+            *current = gen_over(*current);
+        }
         break;
     default:
+        print("Return to menu from newgame");
         return_menu(current);
         break;
     }
 }
 
 void on_click_load(screen* current,int h){
-    printf("update.c    on_click_ng\n");
+   printf("update.c    on_click_ng\n");
     switch (h)
     {
     case 5:
-        print("Returning to menu");
         *current = gen_menu(*current);
         break;
     default:
         current->jeu = load_save(h+1);
         *current = gen_game(*current);
+        print("Returning to menu load");
         return_menu(current);
         break;
     }
 }
 
 void on_click_over(screen* current,int h){
-    printf("update.c    on_click_ng\n");
+   printf("update.c    on_click_ng\n");
     switch (h)
     {
     case 0:
@@ -117,28 +124,37 @@ void on_click_over(screen* current,int h){
     default:
         current->jeu = load_save(h+1);
         *current = gen_game(*current);
+        print("Returning to menu from over");
         return_menu(current);
         break;
     }
 }
 
 void update_frame(screen* current){
-    printf("update.c    update_frame\n");
     if(MLV_get_keyboard_state(MLV_KEYBOARD_LALT) == MLV_PRESSED && MLV_get_keyboard_state(MLV_KEYBOARD_F4) == MLV_PRESSED){
-        quit_game(*current);
+        quit_game(current);
     }
 
     if(MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED){
-            return_menu(current);
+            if(current->id == PAUSE){
+                print("RESUMING THE GAME !!!!");
+                while(MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED);
+                current->jeu = load_save(current->jeu.slot);
+                *current = gen_game(*current);
+            }else{
+
+                print("Returning to menu from escape");
+                return_menu(current);
+
+            }
     }
 }
 
 void on_click(screen* current,int h){
-    printf("update.c    on_click\n");
+   printf("update.c    on_click\n");
     switch (current->id)
     {
     case MENU:
-        print("Click on menu");
         on_click_menu(current,h);
         break;
     case OPTIONS:
@@ -159,6 +175,6 @@ void on_click(screen* current,int h){
 }
 
 void update_seconde(screen* current){
-    printf("update.c    update_seconde\n");
+    srand(time(NULL));
     return;
 }

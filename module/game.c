@@ -6,7 +6,7 @@
 
 void copy_blocks(int src[FIGURE_SIZE][FIGURE_SIZE],int dest[FIGURE_SIZE][FIGURE_SIZE]){
     int i,j;
-    printf("game.c    copy_blocks\n");
+   printf("game.c    copy_blocks\n");
     for (i = 0; i < FIGURE_SIZE; i++)
         {
             for (j = 0; j < FIGURE_SIZE;j++)
@@ -16,9 +16,24 @@ void copy_blocks(int src[FIGURE_SIZE][FIGURE_SIZE],int dest[FIGURE_SIZE][FIGURE_
         }
 }
 
+void set_colors(int blocks[FIGURE_SIZE][FIGURE_SIZE]){
+  int rnd,i,j;
+    rnd = (rand() % 10) + 10; /*pour la couleur*/
+    for (i = 0; i < FIGURE_SIZE; i++)
+    {
+      for (j = 0; j < FIGURE_SIZE; j++)
+      {
+        if (blocks[i][j] == 1)
+        {
+          blocks[i][j] = rnd;
+        }
+      }
+    }
+}
+
 int get_empty_figure(game g){
     int i, j, k;
-    printf("game.c    get_empty_figure\n");
+   printf("game.c    get_empty_figure\n");
     for (k = 0; k < MAX_FIGURES;k++)
     {
         for (i = 0; i < FIGURE_SIZE; i++)
@@ -38,7 +53,7 @@ int get_empty_figure(game g){
 void transp(int dest[FIGURE_SIZE][FIGURE_SIZE]){
     int src[FIGURE_SIZE][FIGURE_SIZE];
     int i, j;
-    printf("game.c    transp\n");
+   printf("game.c    transp\n");
     copy_blocks(dest,src);
     for (i = 0; i < FIGURE_SIZE; i++)
     {
@@ -52,7 +67,7 @@ void transp(int dest[FIGURE_SIZE][FIGURE_SIZE]){
 void reverse_row(int dest[FIGURE_SIZE][FIGURE_SIZE]){
     int i, j;
     int src[FIGURE_SIZE][FIGURE_SIZE];
-    printf("game.c    reverse_row\n");
+   printf("game.c    reverse_row\n");
     copy_blocks(dest,src);
     for (i = 0; i < FIGURE_SIZE; i++)
     {
@@ -66,7 +81,7 @@ void reverse_row(int dest[FIGURE_SIZE][FIGURE_SIZE]){
 void reverse_col(int dest[FIGURE_SIZE][FIGURE_SIZE]){
     int i, j;
     int src[FIGURE_SIZE][FIGURE_SIZE];
-    printf("game.c    reverse_col\n");
+   printf("game.c    reverse_col\n");
     copy_blocks(dest,src);
     for (i = 0; i < FIGURE_SIZE; i++)
     {
@@ -81,7 +96,7 @@ void reverse_col(int dest[FIGURE_SIZE][FIGURE_SIZE]){
  * Rotation de +90°
 */
 void rot_90(int dest[FIGURE_SIZE][FIGURE_SIZE]){
-    printf("game.c    rot_90\n");
+   printf("game.c    rot_90\n");
     transp(dest);
     reverse_row(dest);
 }
@@ -90,7 +105,7 @@ void rot_90(int dest[FIGURE_SIZE][FIGURE_SIZE]){
  * Rotation de -90°
 */
 void rot_m90(int dest[FIGURE_SIZE][FIGURE_SIZE]){
-    printf("game.c    rot_m90\n");
+   printf("game.c    rot_m90\n");
     transp(dest);
     reverse_col(dest);
 }
@@ -98,13 +113,13 @@ void rot_m90(int dest[FIGURE_SIZE][FIGURE_SIZE]){
 void print_blocks(int mat[FIGURE_SIZE][FIGURE_SIZE])
 {
     int i, j;
-    printf("game.c    print_blocks\n");
+   printf("game.c    print_blocks\n");
     print("------------------------------");
     for (i = 0; i < FIGURE_SIZE; i++)
     {
         for (j = 0; j < FIGURE_SIZE; j++)
         {
-            printf(" %d ",mat[i][j]);
+           printf(" %d ",mat[i][j]);
         }
         print(" ");
     }
@@ -113,7 +128,7 @@ void print_blocks(int mat[FIGURE_SIZE][FIGURE_SIZE])
 
 void gen_blocks(int block[FIGURE_SIZE][FIGURE_SIZE]){
     int i,j,rnd,x,y,lastrnd = -1;
-    printf("game.c    gen_blocks\n");
+   printf("game.c    gen_blocks\n");
     rnd = rand() % 5 + 1;
     for(i=0;i<FIGURE_SIZE;i++)
       for(j=0;j<FIGURE_SIZE;j++)
@@ -213,24 +228,27 @@ void gen_blocks(int block[FIGURE_SIZE][FIGURE_SIZE]){
     for(i = 0; i < rnd;i++){
         rot_90(block);
     }
+    set_colors(block);
 }
 
-void next_turn(game g){
+void next_turn(screen *current){
     int i;
-    printf("game.c    next_turn\n");
-    for(i=0;i < MAX_FIGURES - 1 ; i++){
-        copy_blocks(g.figures[i+1].blocks,g.figures[i].blocks);
+   printf("game.c    next_turn\n");
+    for(i=1;i < MAX_FIGURES ; i++){
+      current->jeu.figures[i-1] = current->jeu.figures[i];
     }
-    gen_blocks(g.figures[MAX_FIGURES-1].blocks);
-    write_save(g);
+    gen_blocks(current->jeu.figures[MAX_FIGURES-1].blocks);
+    write_save(&current->jeu);
 }
 
 game init_game(game g){
     int i,j;
-    printf("game.c    init_game\n");
+   printf("game.c    init_game\n");
     g.case_size = 0;
+    g.slot = 0;
     for(i = 0;i < MAX_FIGURES;i++){
         gen_blocks(g.figures[i].blocks);
+        print_blocks(g.figures[i].blocks);
     }
     for(i = 0; i<NB_LINES;i++)
     for(j=0;j<NB_COLS;j++){
@@ -241,7 +259,7 @@ game init_game(game g){
 
 int est_fini(game g){
     int i;
-    printf("game.c    est_fini\n");
+   printf("game.c    est_fini\n");
     for(i=0;i<NB_COLS;i++){
         if(g.grid[3][i]!=0){
             return 1;       /*Si return 1 alors il y a un bloque sur la première ligne, le jeu est fini*/
@@ -252,7 +270,7 @@ int est_fini(game g){
 
 int verif_sienbas(game g){
   int i, j;
-  printf("game.c    verif_sienbas\n");
+ printf("game.c    verif_sienbas\n");
   for(j=0;j<NB_COLS;j++){
     if(g.grid[NB_LINES-1][j] > (MAX_COLOR-1)/2){
       return 1;
@@ -270,7 +288,7 @@ int verif_sienbas(game g){
 
 game verif_lignecomplete(game g){	/*pour chaque ligne, vérifie si la première valeur de la ligne est 1*/
   int i, j = 0, k, l, verif[NB_LINES]={0};		/*si elle vaut 1 alors ça check toute les valeurs de la ligne*/		/*j fait le count et compte le nombre d'itération de 1*/
-  printf("game.c    verif_lignecomplete\n");/*si j est égal au NB_COLS, alors toute la ligne vaut 1*/
+ printf("game.c    verif_lignecomplete\n");/*si j est égal au NB_COLS, alors toute la ligne vaut 1*/
   for(i=0;i<NB_LINES;i++){
     if(g.grid[i][j]>0 && g.grid[i][j]<=(MAX_COLOR-1)/2){
       for(k=0;k<NB_COLS;k++){
@@ -299,7 +317,7 @@ game verif_lignecomplete(game g){	/*pour chaque ligne, vérifie si la première 
 
 int verif_jeufini(game g){
   int i;
-  printf("game.c    verif_jeufini\n");
+ printf("game.c    verif_jeufini\n");
   for(i=0;i<NB_COLS;i++){
     if(g.grid[3][i] > 0){
       return 1;
@@ -310,39 +328,23 @@ int verif_jeufini(game g){
 
 game descente(game g){
   int i, j;
-  printf("game.c    descente\n");
+ printf("game.c    descente\n");
   for(i=NB_LINES-1;i>=0;i--){
     for(j=0;j<NB_COLS;j++){
       if(g.grid[i][j]>(MAX_COLOR-1)/2){
-	g.grid[i+1][j] = g.grid[i][j];
-	g.grid[i][j] = 0;
+	      g.grid[i+1][j] = g.grid[i][j];
+	      g.grid[i][j] = 0;
       }
     }
   }
   return g;
 }
 
-void set_colors(int blocks[FIGURE_SIZE][FIGURE_SIZE]){
-  int rnd,i,j;
-    rnd = (rand() % 10) + 11; /*pour la couleur*/
-    for (i = 0; i < FIGURE_SIZE; i++)
-    {
-      for (j = 0; j < FIGURE_SIZE; j++)
-      {
-        if (blocks[i][j] == 1)
-        {
-          blocks[i][j] = rnd;
-        }
-      }
-    }
-}
-
 game mouv_gauche(game g, int y){
   int i, j;
-  printf("game.c    mouv_gauche\n");
+ printf("game.c    mouv_gauche\n");
   for(i=0;i<NB_LINES;i++){
     if(g.grid[i][0] > (MAX_COLOR-1)/2){
-      printf("0 ");
       return g;
     }
   }
@@ -359,20 +361,18 @@ game mouv_gauche(game g, int y){
   for(j=1;j<NB_COLS;j++){
     for(i=0;i<NB_LINES;i++){
       if(g.grid[i][j] > (MAX_COLOR-1)/2){
-	printf("1\n");
 	g.grid[i][j-1] = g.grid[i][j];
 	g.grid[i][j] = 0;
       }
     }
   }
-  printf("2\n");
   print("FIN DE LA FONCTION");
   return g;
 }
 
 game mouv_droite(game g, int compteur, int y){
   int i, j;
-  printf("game.c    mouv_droite\n");
+ printf("game.c    mouv_droite\n");
   for(i=0;i<NB_LINES;i++){
     if(g.grid[i][NB_COLS-1]>(MAX_COLOR-1)/2){
       return g;
@@ -402,7 +402,7 @@ game mouv_droite(game g, int compteur, int y){
 game mouv_rot(game g, int x, int y){
   int i, j;
   int figure[FIGURE_SIZE][FIGURE_SIZE], figure2[FIGURE_SIZE][FIGURE_SIZE];
-  printf("game.c    mouv_rot\n");
+ printf("game.c    mouv_rot\n");
   x -= 3;
   if(x < 0){
     return g;
@@ -441,16 +441,17 @@ game mouv_rot(game g, int x, int y){
   return g;
 }
 
-game fixer_bloque(game g){
+void fixer_bloque(screen *current){
   int i, j;
   for(i=0;i<NB_LINES;i++){
     for(j=0;j<NB_COLS;j++){
-      if(g.grid[i][j]>(MAX_COLOR-1)/2){
-	g.grid[i][j] = g.grid[i][j]-10;
+      if(current->jeu.grid[i][j]>(MAX_COLOR-1)/2){
+	      current->jeu.grid[i][j] = current->jeu.grid[i][j]-9;
       }
     }
   }
-  return g;
+  next_turn(current);
+  update_figures(current);
 }
 
 void init_code_couleur(code_couleur c[MAX_COLOR]){
@@ -464,30 +465,29 @@ void init_code_couleur(code_couleur c[MAX_COLOR]){
     c[7].color = MLV_COLOR_SEA_GREEN;
     c[8].color = MLV_COLOR_VIOLET;
     c[9].color = MLV_COLOR_DARK_BLUE;
-    c[10].color = MLV_COLOR_DARKRED;
-    c[11].color = MLV_COLOR_RED;
-    c[12].color = MLV_COLOR_ORANGE;
-    c[13].color = MLV_COLOR_YELLOW;
-    c[14].color = MLV_COLOR_GREEN;
-    c[15].color = MLV_COLOR_CYAN;
-    c[16].color = MLV_COLOR_BLUE;
-    c[17].color = MLV_COLOR_SEA_GREEN;
-    c[18].color = MLV_COLOR_VIOLET;
-    c[19].color = MLV_COLOR_DARK_BLUE;
-    c[20].color = MLV_COLOR_DARKRED;
+    c[10].color = MLV_COLOR_RED;
+    c[11].color = MLV_COLOR_ORANGE;
+    c[12].color = MLV_COLOR_YELLOW;
+    c[13].color = MLV_COLOR_GREEN;
+    c[14].color = MLV_COLOR_CYAN;
+    c[15].color = MLV_COLOR_BLUE;
+    c[16].color = MLV_COLOR_SEA_GREEN;
+    c[17].color = MLV_COLOR_VIOLET;
+    c[18].color = MLV_COLOR_DARK_BLUE;
+    c[19].color = MLV_COLOR_DARKRED;
 }
 
 void gen_ligne(int grid[NB_LINES][NB_COLS], int bloque[FIGURE_SIZE][FIGURE_SIZE], int compteur, int y){
   int j;
-  printf("game.c    gen_ligne\n");
+ printf("game.c    gen_ligne\n");
   if(compteur > 3){
     return;
   }
-  print_blocks(bloque);
-  printf("%d\n", compteur);
+/*print_blocks(bloque);
+ printf("%d\n", compteur);*/
   for(j=0;j<FIGURE_SIZE;j++){
     grid[0][j+y] = bloque[FIGURE_SIZE-1-compteur][j];
-    printf("%d ", grid[0][j+y]);
+   /*printf("%d ", grid[0][j+y]);*/
   }
-  printf("\n");
+ /*printf("\n");*/
 }

@@ -22,13 +22,14 @@
 
 #define CONVERT 10
 
-#define MAX_COLOR 21
+#define MAX_COLOR 19
 
 #define CLAVIER_OPTIONS 5
-#define CLAVIER_TOUCHE_SIZE 25
-#define STR_MAT_GRID NB_LINES*NB_COLS+1
-#define STR_FIG FIGURE_SIZE*FIGURE_SIZE
-#define STR_FIGS FIGURE_SIZE * FIGURE_SIZE * MAX_FIGURES
+#define CLAVIER_ALPHA 26
+#define CLAVIER_NUMERIQUE 10
+#define STR_MAT_GRID 261 /* NB_COLS * NB_LINES + 1 */
+#define STR_FIG 16 /* FIGURE_SIZE² */
+#define STR_FIGS 120 /* FIGURE_SIZE² * MAX_FIGURES */
 
 #define DEFAULT_FPS 24
 
@@ -37,7 +38,7 @@ int resolution_16_9_l[NB_RESOLUTION];
 
 const char* convertions[CONVERT];
 
-typedef enum {MENU,OPTIONS,GAME,NEWGAME,LOAD,PSEUDO,OVER}screen_id;
+typedef enum {MENU,OPTIONS,GAME,NEWGAME,LOAD,PSEUDO,OVER,PAUSE}screen_id;
 
 typedef struct {
     int x,y,width,height;
@@ -78,8 +79,8 @@ typedef struct{
 } code_couleur;
 
 typedef struct{
-	button numerique[10];
-	button alpha[26];
+	button numerique[CLAVIER_NUMERIQUE];
+	button alpha[CLAVIER_ALPHA];
 	button options[CLAVIER_OPTIONS];
 }clavier;
 

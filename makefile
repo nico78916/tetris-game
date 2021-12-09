@@ -8,11 +8,11 @@ sources= ./module/api.c ./module/const.c ./module/string.c ./module/update.c ./m
 
 objets= $(sources:.c=.o)
 
+clean : projet
+	rm -r ./*.o ./module/*.o
 
 projet: $(objets)
 	$(CC) $(CFLAGS) -o $@  $^ $(NFLAGS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -o $@ $(NFLAGS) -c $< 
-clean :
-	rm *.o

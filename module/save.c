@@ -17,13 +17,13 @@ void print_mat(int mat[NB_LINES][NB_COLS],int n,int m){
     int i,j;
     for(i=0;i<n;i++){
         for(j=0;j<m;j++){
-            printf("%d",mat[i][j]);
+           printf("%d",mat[i][j]);
         }
-        printf("\n");
+       printf("\n");
     }
     for(j=0;j<m;j++)
-    printf("-");
-    printf("\n");
+   printf("-");
+   printf("\n");
 }
 
 int get_score_from_save(FILE * save){
@@ -62,7 +62,7 @@ game get_figures(FILE* save,game g){
             fgets(s,10,save);
             j = 0;
             while(s[j] != '\n'){
-                printf("%d",s[j]- '0');
+               printf("%d",s[j]- '0');
                 g.figures[i].blocks[k][j] = s[j]- '0';
                 j++;
             }
@@ -85,10 +85,10 @@ game load_save(int slot){
     save = fopen( path, "r" );
     if ( save == NULL ) {
         print( "La sauvegarde est corrompu ou inaccessible");
+        thing.slot = -1;
         return thing;
     }
     fscanf(save,"score:\n{%d};game:{%[^}];figures{{%[^}],{%[^}],{%[^}],{%[^}],{%[^}]}",&score,mat,fig[0],fig[1],fig[2],fig[3],fig[4]);
-    fclose( save );
     if(strlen(mat) != (NB_COLS)*(NB_LINES)){
         print("SAUVEGARDE CORROMPU IMPOSSIBLE DE CONTINUER LE PROGRAMME");
         exit(-1);
@@ -111,47 +111,60 @@ game load_save(int slot){
     }
     thing.players[0].score = score;
     thing.slot = slot;
+    fclose( save );
     return thing;
 }
 
-void write_save(game g){
+void delete_useless(int grid[NB_LINES][NB_COLS]){
+    int i,j;
+    for(i=0;i<NB_LINES;i++){
+        for(j=0;j<NB_COLS;j++){
+            grid[i][j] = grid[i][j] > 9 ? 0 : grid[i][j];
+        }   
+    }
+}
+
+void write_save(game *g){
     int i,j,k = 0,l;
     FILE * save;
     char path[13];
-    char str[STR_MAT_GRID];
-    char fig[STR_FIGS];
-    if(g.ply_count){
-        
+    char str[STR_MAT_GRID] = "";
+    char fig[STR_FIGS] = "";
+    delete_useless(g->grid);
+    if(g->ply_count > 1){
+        print("Tentative de sauvegarde d'une partie en multijoueur,\n annulation de la sauvegarde ...");
      return;   
     }
-    sprintf(path,"./save/%d.txt",g.slot);
+    sprintf(path,"./save/%d.txt",g->slot);
     save = fopen( path, "w+" );
     for(i = 0;i < NB_LINES;i ++){
         for(j = 0; j < NB_COLS;j++){
-            str[k]='0' + g.grid[i][j];
+            str[k]='0' + g->grid[i][j];
             k++;
         }
-        str[k] = '\n';
-        k++;
     }
+    str[k] = '\0';
     k = 0;
-    print("registering");
     for (i = 0; i < 5; i++)
     {
+        fig[k] = '{';
+        k++;
         for(j = 0; j < 4;j++){
             for(l = 0; l < 4;l++){
-                fig[k] = '0' + g.figures[i].blocks[j][l];
-                printf("%c",fig[k]);
+                fig[k] = '0' + g->figures[i].blocks[j][l];
                 k++;
             }
-            fig[k] = '\n';
-            k++;
-            print("\n");
         }
-        fig[k] = '\n';
+        fig[k] = '}';
+        k++;
+        fig[k] = ',';
         k++;
     }
-    fprintf(save,"%d\nm\n%sb\n%s", g.players[0].score,str,fig);
+    k--;
+    fig[k] = '\0';
+    printf("%s\n",str);
+    printf("%s\n",fig);
+    fprintf(save,"score:{%d};game:{%s};figures:{%s}", g->players[0].score,str,fig);
     fclose(save);
 }
 
@@ -166,7 +179,7 @@ void get_scoreboard(char* names[10],int scores[10]){
         return;
     }
     while(fscanf(save,"%s\n%d",a,&b) == 2 && i < 10){
-        printf("%s %d %d\n",a,b,i);
+       printf("%s %d %d\n",a,b,i);
         names[i] = a;
         scores[i] = b;
         i++;
