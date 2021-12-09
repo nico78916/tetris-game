@@ -506,7 +506,7 @@ void update_figures(screen *current)
           couleur = MLV_COLOR_BLACK;
         }
         current->jeu.figures[k].x = current->jeu.width + current->jeu.x;
-        current->jeu.figures[k].y = FIGURE_SIZE * j + 10;
+        current->jeu.figures[k].y = FIGURE_SIZE * current->jeu.case_size * k;
         draw_figure(current->jeu.figures[k], current->jeu.case_size, current->jeu.colors);
       }
     }
@@ -652,15 +652,7 @@ screen gen_game(screen current)
       }
       count++;
       /*MLV_clear_window(MLV_COLOR_BLACK);*/
-      /* ON génère les blocs après la grille pour quelle soit dessiné par dessus ! */
       draw_grid(current.jeu);
-      /*for (i = 0; i < NB_COLS; i++)
-      {
-        for (j = 0; j < NB_LINES; j++)
-        {
-          MLV_draw_rectangle(current.jeu.x + i * current.jeu.case_size, current.jeu.y + j * current.jeu.case_size, current.jeu.case_size, current.jeu.case_size, MLV_COLOR_GREY);
-        }
-      }*/
       /* dessine les blocks une fois dans la matrice */
       for (i = 0; i < NB_COLS; i++)
       {
