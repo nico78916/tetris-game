@@ -3,6 +3,7 @@
 #include "../header/api.h"
 #include "../header/const.h"
 #include "../header/save.h"
+#include "../header/graphics.h"
 
 void copy_blocks(int src[FIGURE_SIZE][FIGURE_SIZE],int dest[FIGURE_SIZE][FIGURE_SIZE]){
     int i,j;
@@ -16,20 +17,37 @@ void copy_blocks(int src[FIGURE_SIZE][FIGURE_SIZE],int dest[FIGURE_SIZE][FIGURE_
         }
 }
 
+void print_blocks(int mat[FIGURE_SIZE][FIGURE_SIZE])
+{
+    int i, j;
+   printf("game.c    print_blocks\n");
+    print("------------------------------");
+    for (i = 0; i < FIGURE_SIZE; i++)
+    {
+        for (j = 0; j < FIGURE_SIZE; j++)
+        {
+           printf(" %d ",mat[i][j]);
+        }
+        print(" ");
+    }
+    print("------------------------------");
+}
+
 void set_colors(int blocks[FIGURE_SIZE][FIGURE_SIZE]){
   int rnd,i,j;
     rnd = (rand() % 10) + 10; /*pour la couleur*/
-    if(rnd == 0 || rnd == 10)rnd++;
+    if(rnd == 0 || rnd == 10)rnd = 11;
     for (i = 0; i < FIGURE_SIZE; i++)
     {
       for (j = 0; j < FIGURE_SIZE; j++)
       {
         if (blocks[i][j] == 1)
         {
-          blocks[i][j] = rnd == 10 ? 0 : rnd;
+          blocks[i][j] = rnd;
         }
       }
     }
+  print_blocks(blocks);
 }
 
 int get_empty_figure(game g){
@@ -111,22 +129,6 @@ void rot_m90(int dest[FIGURE_SIZE][FIGURE_SIZE]){
     reverse_col(dest);
 }
 
-void print_blocks(int mat[FIGURE_SIZE][FIGURE_SIZE])
-{
-    int i, j;
-   printf("game.c    print_blocks\n");
-    print("------------------------------");
-    for (i = 0; i < FIGURE_SIZE; i++)
-    {
-        for (j = 0; j < FIGURE_SIZE; j++)
-        {
-           printf(" %d ",mat[i][j]);
-        }
-        print(" ");
-    }
-    print("------------------------------");
-}
-
 void gen_blocks(int block[FIGURE_SIZE][FIGURE_SIZE]){
     int i,j,rnd,x,y,lastrnd = -1;
    printf("game.c    gen_blocks\n");
@@ -197,13 +199,17 @@ void gen_blocks(int block[FIGURE_SIZE][FIGURE_SIZE]){
 }
 
 void next_turn(screen *current){
-    int i;
+    int i,j;
    printf("game.c    next_turn\n");
     for(i=1;i < MAX_FIGURES ; i++){
       current->jeu.figures[i-1] = current->jeu.figures[i];
     }
     gen_blocks(current->jeu.figures[MAX_FIGURES-1].blocks);
     write_save(&current->jeu);
+    for(i=0;i < MAX_FIGURES ; i++)
+      for(j=0;j < FIGURE_SIZE ; j++){
+        current->jeu.figures[0].blocks[i][j] = current->jeu.figures[0].blocks[i][j] == 0 ? 0 : current->jeu.figures[0].blocks[i][j] + 10;
+      }
 }
 
 game init_game(game g){
@@ -226,7 +232,7 @@ int est_fini(game g){
     int i;
    printf("game.c    est_fini\n");
     for(i=0;i<NB_COLS;i++){
-        if(g.grid[3][i]!=0){
+        if(g.grid[0][i]!=0){
             return 1;       /*Si return 1 alors il y a un bloque sur la première ligne, le jeu est fini*/
         }
     }
@@ -235,16 +241,16 @@ int est_fini(game g){
 
 int verif_sienbas(game g){
   int i, j;
- printf("game.c    verif_sienbas\n");
+  printf("game.c    verif_sienbas\n");
   for(j=0;j<NB_COLS;j++){
-    if(g.grid[NB_LINES-1][j] > (MAX_COLOR-1)/2){
+    if(g.grid[NB_LINES-1][j] > (MAX_COLOR)/2){
       return 1;
     }
   }
   for(i=NB_LINES-1;i>0;i--){
     for(j=0;j<NB_COLS;j++){
-      if(g.grid[i][j]>0 && g.grid[i][j]<=(MAX_COLOR-1)/2 && g.grid[i-1][j] > (MAX_COLOR-1)/2){
-	return 1;
+      if(g.grid[i][j]>0 && g.grid[i][j]< 10 && g.grid[i-1][j] > 10){
+	      return 1;
       }
     }
   }
@@ -296,7 +302,7 @@ game descente(game g){
  printf("game.c    descente\n");
   for(i=NB_LINES-1;i>=0;i--){
     for(j=0;j<NB_COLS;j++){
-      if(g.grid[i][j]>(MAX_COLOR-1)/2){
+      if(g.grid[i][j]>10){
 	      g.grid[i+1][j] = g.grid[i][j];
 	      g.grid[i][j] = 0;
       }
@@ -364,53 +370,11 @@ game mouv_droite(game g, int compteur, int y){
   return g;
 }
 
-game mouv_rot(game g, int x, int y){
-  int i, j;
-  int figure[FIGURE_SIZE][FIGURE_SIZE], figure2[FIGURE_SIZE][FIGURE_SIZE];
- printf("game.c    mouv_rot\n");
-  x -= 3;
-  if(x < 0){
-    return g;
-  }
-  if(y <= 0){
-    return g;
-  }
-  if(y > NB_COLS - 4){
-    return g;
-  }
-  for(i=0;i<FIGURE_SIZE;i++){
-    for(j=0;j<FIGURE_SIZE;j++){
-      figure[i][j] = g.grid[i+x][j+y];
-      figure2[i][j] = g.grid[i+x][j+y];
-      if(figure[i][j] > 0 && figure[i][j] <= (MAX_COLOR-1)/2){
-	figure[i][j] = 0;
-      }
-    }
-  }
-  rot_90(figure);
-  for(i=0;i<FIGURE_SIZE;i++){
-    for(j=0;j<FIGURE_SIZE;j++){
-      if(figure2[i][j]>0 && figure2[i][j]<=(MAX_COLOR-1)/2 && figure[i][j] != 0){
-        return g;
-      }
-    }
-  }
-  for(i=0;i<FIGURE_SIZE;i++){
-    for(j=0;j<FIGURE_SIZE;j++){
-      g.grid[i+x][j+y] = figure[i][j];
-      if(figure2[i][j] > 0 && figure2[i][j] <= (MAX_COLOR-1)/2){
-	g.grid[i+x][j+y] = figure2[i][j];
-      }
-    }
-  }
-  return g;
-}
-
 void fixer_bloque(screen *current){
   int i, j;
   for(i=0;i<NB_LINES;i++){
     for(j=0;j<NB_COLS;j++){
-      if(current->jeu.grid[i][j]>(MAX_COLOR-1)/2){
+      if(current->jeu.grid[i][j]>(MAX_COLOR)/2){
 	      current->jeu.grid[i][j] = current->jeu.grid[i][j]-10;
       }
     }
@@ -448,11 +412,220 @@ void gen_ligne(int grid[NB_LINES][NB_COLS], int bloque[FIGURE_SIZE][FIGURE_SIZE]
   if(compteur > 3){
     return;
   }
-/*print_blocks(bloque);
- printf("%d\n", compteur);*/
+  print_blocks(bloque);
+  printf("%d\n", compteur);
   for(j=0;j<FIGURE_SIZE;j++){
     grid[0][j+y] = bloque[FIGURE_SIZE-1-compteur][j];
-   /*printf("%d ", grid[0][j+y]);*/
+    printf("%d ", grid[0][j+y]);
   }
- /*printf("\n");*/
+  printf("\n");
+}
+void montee_figure(int g[FIGURE_SIZE][FIGURE_SIZE]){
+  int i, j;
+  printf("game.c    montee\n");
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(g[i][j]>(MAX_COLOR-1)/2){
+	g[i-1][j] = g[i][j];
+	g[i][j] = 0;
+      }
+    }
+  }
+  return;
+}
+
+void descente_figure(int g[FIGURE_SIZE][FIGURE_SIZE]){
+  int i, j;
+  printf("game.c    descente\n");
+  for(i=FIGURE_SIZE-1;i>=0;i--){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(g[i][j]>(MAX_COLOR-1)/2){
+	g[i+1][j] = g[i][j];
+	g[i][j] = 0;
+      }
+    }
+  }
+}
+void mouv_gauche_figure(int g[FIGURE_SIZE][FIGURE_SIZE]){
+  int i, j;
+  printf("game.c    mouv_gauche\n");
+  for(i=0;i<FIGURE_SIZE;i++){
+    if(g[i][0] > (MAX_COLOR-1)/2){
+      printf("0 ");
+      return;
+    }
+  }
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=1;j<FIGURE_SIZE;j++){
+      if(g[i][j-1]>0 && g[i][j-1]<=(MAX_COLOR-1)/2 && g[i][j] > (MAX_COLOR-1)/2){
+	return;
+      }
+    }
+  }
+  for(j=1;j<FIGURE_SIZE;j++){
+    for(i=0;i<FIGURE_SIZE;i++){
+      if(g[i][j] > (MAX_COLOR-1)/2){
+	printf("1\n");
+	g[i][j-1] = g[i][j];
+	g[i][j] = 0;
+      }
+    }
+  }
+  printf("2\n");
+  print("FIN DE LA FONCTION");
+  return;
+}
+
+void mouv_droite_figure(int g[FIGURE_SIZE][FIGURE_SIZE]){
+  int i, j;
+  printf("game.c    mouv_droite\n");
+  for(i=0;i<FIGURE_SIZE;i++){
+    if(g[i][NB_COLS-1]>(MAX_COLOR-1)/2){
+      return;
+    }
+  }
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<NB_COLS-1;j++){
+      if(g[i][j+1]>0 && g[i][j+1]<=(MAX_COLOR-1)/2 && g[i][j] > (MAX_COLOR-1)/2){
+	return;
+      }
+    }
+  }
+  for(j=FIGURE_SIZE-2;j>=0;j--){
+    for(i=0;i<FIGURE_SIZE;i++){
+      if(g[i][j]>(MAX_COLOR-1)/2){
+	g[i][j+1] = g[i][j];
+	g[i][j] = 0;
+      }
+    }
+  }
+  return;
+}
+
+game mouv_rot(game g, int x, int y){
+  int i, j, tabx[FIGURE_SIZE] = {0}, taby[FIGURE_SIZE] = {0}, rotx[FIGURE_SIZE] = {0}, roty[FIGURE_SIZE] = {0}, tx = 0, ty = 0, rx = 0, ry = 0, cx = 0, cy = 0, crx = 0, cry = 0, decalage1 = 0, decalage2 = 0, y1, y2, count = 0;
+  int figure[FIGURE_SIZE][FIGURE_SIZE], figure2[FIGURE_SIZE][FIGURE_SIZE];
+  printf("game.c    mouv_rot\n");
+  y1 = y;
+  y2 = y;
+  x -= 3;
+  if(x < 0){
+    return g;
+  }
+  /*if(y <= 0){
+    return g;
+  }
+  if(y > NB_COLS - 4){
+    return g;
+    }*/
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      figure[i][j] = g.grid[i+x][j+y];
+      figure2[i][j] = g.grid[i+x][j+y];
+      if(figure[i][j] > 0 && figure[i][j] <= (MAX_COLOR-1)/2){
+	figure[i][j] = 0;
+      }
+    }
+  }
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(figure[i][j] > (MAX_COLOR-1)/2){
+	tabx[i] = i + 1;
+	taby[j] = j + 1;
+      }
+    }
+  }
+  rot_90(figure);
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(figure[i][j] > (MAX_COLOR-1)/2){
+	rotx[i] = i + 1;
+	roty[j] = j + 1;
+      }
+    }
+  }
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(tabx[i] != 0){
+	tx += tabx[i];
+	cx += 1;
+      }
+      if(taby[j] != 0){
+	ty += taby[j];
+	cy += 1;
+      }
+      if(rotx[i] != 0){
+	rx += rotx[i];
+	crx += 1;
+      }
+      if(roty[j] != 0){
+	ry += roty[j];
+	cry += 1;
+      }
+    }
+  }
+  tx = tx / cx;
+  ty = ty / cy;
+  rx = rx / crx;
+  ry = ry / cry;
+  while((tx != rx && count < 20) || (ty != ry && count < 20)){
+    if(tx<rx && rotx[0] == 0){
+      rx -= 1;
+      montee_figure(figure);
+      count += 1;
+    }else if(tx>rx && rotx[3] == 0){
+      rx += 1;
+      descente_figure(figure);
+      count += 1;
+    }
+    if(ty<ry && roty[0] == 0){
+      ry -= 1;
+      mouv_gauche_figure(figure);
+      count += 1;
+    }else if(ty>ry && roty[3] == 0){
+      ry += 1;
+      mouv_droite_figure(figure);
+      count += 1;
+    }
+  }
+  while(y1<0){
+    y1 += 1;
+    decalage1 += 1;
+    printf("%d\n", decalage1);
+  }
+  for(i=0;i<decalage1;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(figure[j][i] > (MAX_COLOR-1)/2){
+	return g;
+      }
+    }
+  }
+  while(y2>NB_COLS){
+    y2 -= 1;
+    decalage2 -= 1;
+    printf("%d\n", decalage2);
+  }
+  for(i=FIGURE_SIZE-decalage2;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(figure[j][i] > (MAX_COLOR-1)/2){
+	return g;
+      }
+    }
+  } 
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      if(figure2[i][j]>0 && figure2[i][j]<=(MAX_COLOR-1)/2 && figure[i][j] != 0){
+        return g;
+      }
+    }
+  }
+  for(i=0;i<FIGURE_SIZE;i++){
+    for(j=0;j<FIGURE_SIZE;j++){
+      g.grid[i+x][j+y] = figure[i][j];
+      if(figure2[i][j] > 0 && figure2[i][j] <= (MAX_COLOR-1)/2){
+	g.grid[i+x][j+y] = figure2[i][j];
+      }
+    }
+  }
+  return g;
 }

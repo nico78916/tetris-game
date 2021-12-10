@@ -2,6 +2,7 @@
 #include <MLV/MLV_all.h>
 #include "../header/api.h"
 #include "../header/const.h"
+#include "../header/game.h"
 /* Pour lire ou écrire les sauvegardes */
 
 void init_mat(int mat[NB_LINES][NB_COLS]){
@@ -64,6 +65,7 @@ game get_figures(FILE* save,game g){
             while(s[j] != '\n'){
                printf("%d",s[j]- '0');
                 g.figures[i].blocks[k][j] = s[j]- '0';
+                g.figures[i].blocks[k][j] = g.figures[i].blocks[k][j] > 0 ? g.figures[i].blocks[k][j] + 10 : 0;
                 j++;
             }
             print(" ");
@@ -73,46 +75,45 @@ game get_figures(FILE* save,game g){
     return g;
 }
 
-game load_save(int slot){
+void load_save(screen *current){
     FILE * save;
-    game thing;
     char path[13];
-    char mat[STR_MAT_GRID];
-    char fig[MAX_FIGURES][STR_FIG];
+    char mat[STR_MAT_GRID] = "";
+    char fig[MAX_FIGURES][STR_FIG] = {"","","","",""};
     int score,i,j,k = 0,l=0;
-    init_mat(thing.grid);
-    sprintf(path,"./save/%d.txt",slot);
+    init_mat(current->jeu.grid);
+    sprintf(path,"./save/%d.txt",current->jeu.slot);
     save = fopen( path, "r" );
     if ( save == NULL ) {
         print( "La sauvegarde est corrompu ou inaccessible");
-        thing.slot = -1;
-        return thing;
+        exit(-1);
     }
-    fscanf(save,"score:\n{%d};game:{%[^}];figures{{%[^}],{%[^}],{%[^}],{%[^}],{%[^}]}",&score,mat,fig[0],fig[1],fig[2],fig[3],fig[4]);
+    /* ,{%[^}]},{%[^}]},{%[^}]},{%[^}]}} ,fig[1],fig[2],fig[3],fig[4] */
+    fscanf(save,"score:{%d};game:{%[^}]};figures:{{%[^}]},{%[^}]},{%[^}]},{%[^}]},{%[^}]}}",&score,mat,fig[0],fig[1],fig[2],fig[3],fig[4]);
     if(strlen(mat) != (NB_COLS)*(NB_LINES)){
         print("SAUVEGARDE CORROMPU IMPOSSIBLE DE CONTINUER LE PROGRAMME");
         exit(-1);
     }
     for(i = 0;i<NB_LINES;i++){
         for(j=0;j<NB_COLS;j++){
-            thing.grid[i][j] = mat[k] - '0';
+            current->jeu.grid[i][j] = mat[k] - '0';
             k++;
         }
     }
-    print_mat(thing.grid,NB_LINES,NB_COLS);
-    for(i=0;i<5;i++){
+    print_mat(current->jeu.grid,NB_LINES,NB_COLS);
+    for(i=0;i<MAX_FIGURES;i++){
+        printf("fig[%d] = %s\n",i,fig[i]);
         l = 0;
         for(j=0;j<FIGURE_SIZE;j++){
             for(k=0;k<FIGURE_SIZE;k++){
-                thing.figures[i].blocks[j][k] = fig[i][l]-'0';
+                current->jeu.figures[i].blocks[j][k] = (fig[i][l]-'0') == 0 ? 0 : (fig[i][l]-'0')+10;
                 l++;
             }
         }
     }
-    thing.players[0].score = score;
-    thing.slot = slot;
+    current->jeu.ply_count = 1;
+    current->jeu.players[0].score = score;
     fclose( save );
-    return thing;
 }
 
 void delete_useless(int grid[NB_LINES][NB_COLS]){
@@ -130,11 +131,19 @@ void write_save(game *g){
     char path[13];
     char str[STR_MAT_GRID] = "";
     char fig[STR_FIGS] = "";
+    print("SAVING");
     delete_useless(g->grid);
+    for(i=0;i<MAX_FIGURES;i++){
+        for(j=0;j<FIGURE_SIZE;j++)
+            for(k=0;k<FIGURE_SIZE;k++){
+                g->figures[i].blocks[j][k] = g->figures[i].blocks[j][k] > 10 ? g->figures[i].blocks[j][k] - 10 : g->figures[i].blocks[j][k];
+            }
+    }
     if(g->ply_count > 1){
         print("Tentative de sauvegarde d'une partie en multijoueur,\n annulation de la sauvegarde ...");
      return;   
     }
+    k=0;
     sprintf(path,"./save/%d.txt",g->slot);
     save = fopen( path, "w+" );
     for(i = 0;i < NB_LINES;i ++){
@@ -162,8 +171,8 @@ void write_save(game *g){
     }
     k--;
     fig[k] = '\0';
-    printf("%s\n",str);
-    printf("%s\n",fig);
+    printf("game :\n %s\n",str);
+    printf("figures : \n %s\n",fig);
     fprintf(save,"score:{%d};game:{%s};figures:{%s}", g->players[0].score,str,fig);
     fclose(save);
 }

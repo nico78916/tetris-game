@@ -39,10 +39,17 @@ screen gen_over(screen current);
 screen gen_game(screen current);
 
 /**
- * Génère l'écran de sauvegarde à partir de current
+ * Génère l'écran de chargement de sauvegarde à partir de current
  * @param current l'écran avec les données de résolution
 */
 screen gen_load(screen current);
+
+/**
+ * @brief Génère l'écran de sauvegarde à partir de current
+ * @param current l'écran avec les données de résolution
+*/
+screen gen_save(screen current);
+
 
 /**
  * Passe de plein écran et fenêtré
@@ -108,3 +115,5 @@ screen gen_pause(screen current);
 void toggleSound(screen *current);
 
 void toggleColor(screen *current);
+
+void update_figures(screen *current);

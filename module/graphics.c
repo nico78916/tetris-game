@@ -487,26 +487,17 @@ void draw_figure(figure fig, int case_size, int color_on)
 /* met à jours les prochaines figures qui vont descendre */
 void update_figures(screen *current)
 {
-  int i, j, k, width, height;
+  int i, j, k;
   code_couleur code_couleur[MAX_COLOR];
-  int couleur;
   init_code_couleur(code_couleur);
   /*print_blocks(fig.blocks);*/
-  for (k = 0; k < MAX_FIGURES; k++)
+  for (k = 1; k < MAX_FIGURES; k++)/* figure[0] c'est la figure qui tombe actuellement donc pas besoin*/
     for (i = 0; i < FIGURE_SIZE; i++)
     {
       for (j = 0; j < FIGURE_SIZE; j++)
       {
-        if (current->jeu.figures[k].blocks[i][j] != 0)
-        {
-          couleur = current->jeu.colors == 1 ? code_couleur[current->jeu.figures[k].blocks[i][j]].color : MLV_rgba(255 / current->jeu.figures[k].blocks[i][j], 255 / current->jeu.figures[k].blocks[i][j], 255 / current->jeu.figures[k].blocks[i][j], 255);
-        }
-        else
-        {
-          couleur = MLV_COLOR_BLACK;
-        }
         current->jeu.figures[k].x = current->jeu.width + current->jeu.x;
-        current->jeu.figures[k].y = FIGURE_SIZE * current->jeu.case_size * k;
+        current->jeu.figures[k].y = FIGURE_SIZE * current->jeu.case_size * (k-1);
         draw_figure(current->jeu.figures[k], current->jeu.case_size, current->jeu.colors);
       }
     }
@@ -527,29 +518,42 @@ void print_block(int blocks[FIGURE_SIZE][FIGURE_SIZE])
 
 screen gen_pause(screen current)
 {
-  int width, height, bw, bh;
+  int i,width, height, bw, bh,start;
+  char* label[3] = {"SAUVEGARDER","OPTIONS","RETOUR AU JEU"};
   printf("graphics.c    gen_pause\n");
+  MLV_clear_window(MLV_COLOR_BLACK);
+  current.btncount = 3;
   width = current.width;
   height = current.height;
   bw = width / 2;
   bh = height / 2;
   current.id = PAUSE;
-  MLV_draw_text_with_font(width / 2 - bw / 2, height / 2 - bh / 2, "PAUSE", title_font, MLV_COLOR_GREY);
+  MLV_get_size_of_text_with_font("PAUSE",&bw,&bh,title_font);
+  start = bh + bh/2;
+  MLV_draw_text_with_font(width / 2 - bw / 2, bh / 2, "PAUSE", title_font, MLV_COLOR_GREY);
+  bw = width/2;
+  bh = height / (current.btncount*2);
+  for(i=0;i<current.btncount;i++){
+    current.buttons[i].x = width / 2 - bw / 2;
+    current.buttons[i].y = start +bh*2*i;
+    current.buttons[i].width = bw;
+    current.buttons[i].height = bh;
+    current.buttons[i].label = label[i];
+  }
   return current;
 }
 
 screen gen_game(screen current)
 {
-  int height, i, j, finw = 0, count = 0, couleur, compteur, mouv_x, mouv_y, bloqueencours[FIGURE_SIZE][FIGURE_SIZE];
-  char *label = "NO NAME";
-  button b;
+  int height, i, j, finw = 0, count = 0, couleur, compteur, mouv_x, mouv_y;
   code_couleur code_couleur[MAX_COLOR];
   printf("graphics.c    gen_game\n");
-  MLV_clear_window(MLV_COLOR_BLACK);
   init_code_couleur(code_couleur);
   current.btncount = 0;
   height = current.height;
   height = current.height;
+  current.id = GAME;
+  current.last_screen_id = PAUSE;
   current.jeu.case_size = height / NB_LINES;
   current.jeu.x = (current.width / 2 - (NB_COLS * current.jeu.case_size) / 2);
   current.jeu.y = height / 100;
@@ -564,23 +568,17 @@ screen gen_game(screen current)
   MLV_change_frame_rate(24);
   while (est_fini(current.jeu) == 0)
   {
-    for (i = 0; i < FIGURE_SIZE; i++)
-    {
-      for (j = 0; j < FIGURE_SIZE; j++)
-      { /*création du bloque*/ /*appeler gen_ligne*/
-        bloqueencours[i][j] = current.jeu.figures[0].blocks[i][j];
-      }
-    }
+    MLV_clear_window(MLV_COLOR_BLACK);
+    update_figures(&current);
     compteur = 0;
     mouv_x = 0;
     mouv_y = 5;
-    gen_ligne(current.jeu.grid, bloqueencours, compteur, mouv_y);
+    print_block(current.jeu.figures[0].blocks);
+    gen_ligne(current.jeu.grid, current.jeu.figures[0].blocks, compteur, mouv_y);
     compteur += 1;
     while (finw == 0)
     { /*boucle qui fait tomber le bloque et attend les instructions*/
-      /*penser à mettre un reset buffer*/
       MLV_delay_according_to_frame_rate();
-      MLV_get_keyboard_state(MLV_KEYBOARD_DOWN);
       if (count >= 4)
       {
         if (verif_sienbas(current.jeu) == 0)
@@ -588,7 +586,7 @@ screen gen_game(screen current)
           current.jeu = descente(current.jeu); /*si atente d'une seconde, le bloque tombe, modification de la grille*/
           count = 0;
           mouv_x += 1;
-          gen_ligne(current.jeu.grid, bloqueencours, compteur, mouv_y);
+          gen_ligne(current.jeu.grid, current.jeu.figures[0].blocks, compteur, mouv_y);
           compteur += 1;
         }
       }
@@ -599,7 +597,7 @@ screen gen_game(screen current)
           current.jeu = descente(current.jeu);
           count = 0;
           mouv_x += 2;
-          gen_ligne(current.jeu.grid, bloqueencours, compteur, mouv_y);
+          gen_ligne(current.jeu.grid, current.jeu.figures[0].blocks, compteur, mouv_y);
           compteur += 1;
         }
       }
@@ -607,6 +605,7 @@ screen gen_game(screen current)
       if (MLV_get_keyboard_state(MLV_KEYBOARD_LALT) == MLV_PRESSED && MLV_get_keyboard_state(MLV_KEYBOARD_END) == MLV_PRESSED)
       { /* Raccourci pour arrêter le jeux */
         current.id = GAME;
+        current.last_screen_id = OVER;
         return current;
       }
       if (MLV_get_keyboard_state(MLV_KEYBOARD_LALT) == MLV_PRESSED && MLV_get_keyboard_state(MLV_KEYBOARD_F4) == MLV_PRESSED)
@@ -633,24 +632,22 @@ screen gen_game(screen current)
       {
         printf("insérer une fonction pour la pause (appuie sur p, pause ou echap)\n");
         write_save(&current.jeu);
-        current.id = PAUSE;
+        current.id = GAME;
+        current.last_screen_id = PAUSE;
+        while(MLV_get_keyboard_state(MLV_KEYBOARD_p) == MLV_PRESSED || MLV_get_keyboard_state(MLV_KEYBOARD_PAUSE) == MLV_PRESSED || MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED);
         return current;
       }
       /*}*/
       /*à la fin de chaque while, vérifier que le bloque n'est pas descendu en bas sinon return 1*/
-      /*for (i = 0; i < NB_LINES; i++)
+      for (i = 0; i < NB_LINES; i++)
       {
         for (j = 0; j < NB_COLS; j++)
         {
          printf("%d ", current.jeu.grid[i][j]);
         }
        printf("\n");
-      }*/
-      if (verif_sienbas(current.jeu) == 1)
-      {
-        finw = 1;
       }
-      count++;
+      finw = verif_sienbas(current.jeu);
       /*MLV_clear_window(MLV_COLOR_BLACK);*/
       draw_grid(current.jeu);
       /* dessine les blocks une fois dans la matrice */
@@ -665,6 +662,7 @@ screen gen_game(screen current)
           }
         }
       }
+      count++;
       MLV_actualise_window();
     }
     /*il faut que le bloque s'intègre aux bloques fixes*/
@@ -675,13 +673,7 @@ screen gen_game(screen current)
     /*appel de la fonction pour vérifier si le jeu est fini et recommence au premier while*/
   }
   printf("est_fini1\n");
-  for (i = 0; i < MAX_FIGURES; i++)
-  {
-    current.jeu.figures[i] = current.jeu.figures[i];
-  }
-  printf("est_fini2\n");
   current.id = GAME;
-  printf("est_fini3\n");
   return current;
 }
 
@@ -751,6 +743,39 @@ screen gen_load(screen current)
   current.id = LOAD;
   return current;
 }
+
+screen gen_save(screen current)
+{
+  int i, lastY, bw, bh, tw, th, width, height;
+  char *labels[6] = {"SAUVEGRADE 1", "SAUVEGARDE 2", "SAUVEGARDE 3", "SAUVEGARDE 4", "SAUVEGARDE 5", "RETOUR"};
+  printf("graphics.c    gen_load\n");
+  current.btncount = 6;
+  MLV_clear_window(MLV_COLOR_BLACK);
+  width = current.width;
+  height = current.height;
+  bw = width / 2;
+  bh = height / (current.btncount * 2);
+  lastY = height / (current.btncount - 1) - bh / 2;
+  MLV_get_size_of_text_with_font("SAUVEGARDE", &tw, &th, title_font);
+  MLV_draw_text_with_font(width / 2 - tw / 2, height / 10 - th / 2, "SAUVEGARDE", title_font, MLV_COLOR_WHITE);
+  for (i = 0; i < current.btncount; i++)
+  {
+    button b;
+    /*char a[MAX_STR];*/
+    MLV_draw_text_box_with_font(width / 2 - bw / 2, lastY, bw, bh, labels[i], default_font, 20, MLV_COLOR_WHITE, MLV_COLOR_BLACK, MLV_COLOR_GREY, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
+    b.height = bh;
+    b.width = bw;
+    b.x = width / 2 - bw / 2;
+    b.y = lastY;
+    b.label = labels[i];
+    /*strcpy(b.label,labels[i]);*/
+    current.buttons[i] = b;
+    lastY += bh + height / 16;
+  }
+  current.id = SAVE;
+  return current;
+}
+
 void toggleSound(screen *current)
 {
   current->jeu.sound = (current->jeu.sound + 1) % 2;

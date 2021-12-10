@@ -22,7 +22,7 @@
 
 #define CONVERT 10
 
-#define MAX_COLOR 19
+#define MAX_COLOR 20
 
 #define CLAVIER_OPTIONS 5
 #define CLAVIER_ALPHA 26
@@ -38,7 +38,7 @@ int resolution_16_9_l[NB_RESOLUTION];
 
 const char* convertions[CONVERT];
 
-typedef enum {MENU,OPTIONS,GAME,NEWGAME,LOAD,PSEUDO,OVER,PAUSE}screen_id;
+typedef enum {MENU,OPTIONS,GAME,NEWGAME,LOAD,SAVE,PSEUDO,OVER,PAUSE}screen_id;
 
 typedef struct {
     int x,y,width,height;
@@ -65,7 +65,7 @@ typedef struct {
 
 typedef struct{
     int width,height,btncount,max_width,max_height;/* La différence avec MAX_SCREEN_WIDTH c'est que cette variable prend en compte la résolution "maximale" de l'ordinateur et non du jeu */
-    screen_id id;
+    screen_id id,last_screen_id;
     game jeu;
     button buttons[MAX_BUTTON];
     MLV_Button_state pressed;

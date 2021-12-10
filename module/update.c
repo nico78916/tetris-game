@@ -21,9 +21,48 @@ void quit_game(screen* current){
     exit(0);
 }
 
+void gen_screen(screen *current,screen_id id){
+    current->last_screen_id = current->id;
+    current->id = id;
+    switch (id)
+    {
+    case MENU:
+        *current = gen_menu(*current);
+        break;
+    case OPTIONS:
+    *current = gen_option(*current);
+    break;
+    case GAME:
+        *current = gen_game(*current);
+    break;
+    case NEWGAME:
+        *current = gen_newgame(*current);
+    break;
+    case LOAD:
+        *current = gen_load(*current);
+    break;
+    case SAVE :
+        *current = gen_save(*current);
+    break;
+    case PSEUDO :
+        *current = gen_pseudo(*current);
+    break;
+    case OVER:
+        *current = gen_over(*current);
+    break;
+    case PAUSE:
+        *current = gen_pause(*current);
+    break;
+    default:
+        print("L'identifiant de l'écran n'est pas connu");
+        exit(-1);
+        break;
+    }
+
+}
+
 void return_menu(screen* current){
-   printf("update.c    return_menu\n");
-    *current = gen_menu(*current);
+    gen_screen(current,MENU);
 }
 
 void on_click_menu(screen* current,int h){
@@ -34,13 +73,13 @@ void on_click_menu(screen* current,int h){
         quit_game(current);
         break;
     case 3:
-        *current = gen_option(*current);
+        gen_screen(current,OPTIONS);
         break;
     case 2: 
-        *current = gen_load(*current);
+        gen_screen(current,LOAD);
         break;
     case 0:
-        *current = gen_newgame(*current);
+        gen_screen(current,NEWGAME);
         break;
     default:
         break;
@@ -59,14 +98,14 @@ void on_click_opts(screen* current,int h){
         break;
     case 3:
         toggleColor(current);
-        *current = gen_option(*current);
+        *current = gen_option(*current);/* on ne veut pas changer l'encien écran */
         break;
     case 2:
         toggleSound(current);
         *current = gen_option(*current);
         break;
     case 4:
-        *current = gen_menu(*current);
+        gen_screen(current,MENU);
         break;
     default:
         break;
@@ -78,22 +117,15 @@ void on_click_ng(screen* current,int h){
     switch (h)
     {
     case 4:
-        print("Returning to menu");
-        *current = gen_menu(*current);
+        gen_screen(current,MENU);
         break;
     case 0:
         current->jeu = init_game(current->jeu);
-        *current = gen_game(*current);
-        if(current->id == PAUSE){
-            *current = gen_pause(*current);
-            while(MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED) MLV_delay_according_to_frame_rate();
-        }else if(current->id == GAME){
-            *current = gen_over(*current);
-        }
+        gen_screen(current,GAME);
+        gen_screen(current,current->last_screen_id);
         break;
     default:
-        print("Return to menu from newgame");
-        return_menu(current);
+        gen_screen(current,MENU);
         break;
     }
 }
@@ -103,13 +135,29 @@ void on_click_load(screen* current,int h){
     switch (h)
     {
     case 5:
-        *current = gen_menu(*current);
+        gen_screen(current,MENU);
         break;
     default:
-        current->jeu = load_save(h+1);
-        *current = gen_game(*current);
-        print("Returning to menu load");
-        return_menu(current);
+        current->jeu.slot = h+1;
+        load_save(current);
+        gen_screen(current,GAME);
+        gen_screen(current,current->last_screen_id);
+        break;
+    }
+}
+
+void on_click_save(screen* current,int h){
+   printf("update.c    on_click_ng\n");
+    switch (h)
+    {
+    case 5:
+        gen_screen(current,PAUSE);
+        break;
+    default:
+        current->jeu.slot = h+1;
+        write_save(&current->jeu);
+        current->last_screen_id = GAME;
+        gen_screen(current,PAUSE);
         break;
     }
 }
@@ -119,13 +167,24 @@ void on_click_over(screen* current,int h){
     switch (h)
     {
     case 0:
-        *current = gen_pseudo(*current);
+        gen_screen(current,PSEUDO);
         break;
     default:
-        current->jeu = load_save(h+1);
-        *current = gen_game(*current);
-        print("Returning to menu from over");
-        return_menu(current);
+        gen_screen(current,MENU);
+        break;
+    }
+}
+
+void on_click_pause(screen* current,int h){
+   printf("update.c    on_click_ng\n");
+    switch (h)
+    {
+    case 0:
+        gen_screen(current,SAVE);
+        break;
+    default:
+        load_save(current);
+        gen_screen(current,GAME);
         break;
     }
 }
@@ -136,17 +195,8 @@ void update_frame(screen* current){
     }
 
     if(MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED){
-            if(current->id == PAUSE){
-                print("RESUMING THE GAME !!!!");
-                while(MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED);
-                current->jeu = load_save(current->jeu.slot);
-                *current = gen_game(*current);
-            }else{
-
-                print("Returning to menu from escape");
-                return_menu(current);
-
-            }
+            while(MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED);
+            gen_screen(current,current->last_screen_id);
     }
 }
 
@@ -169,6 +219,11 @@ void on_click(screen* current,int h){
     case OVER:
         on_click_over(current,h);
     break;
+    case SAVE:
+        on_click_save(current,h);
+        break;
+    case PAUSE:
+        on_click_pause(current,h);
     default:
         break;
     }

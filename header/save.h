@@ -24,7 +24,7 @@ game get_figures(FILE* save,game g);
 /**
  * Charge la sauvegarde et renvoie les données de jeux
 */
-game load_save(int slot);
+void load_save(screen *current);
 
 /**
  * Enregistre les données de jeux
