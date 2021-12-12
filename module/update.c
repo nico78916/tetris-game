@@ -84,10 +84,12 @@ void on_click_menu(screen* current,int h){
         gen_screen(current,GAME);
         gen_screen(current,current->last_screen_id);
         break;
-    default:
+    
+    case 0:
         /* écran réservé pour le multi mais ce dernié n'a pas été implémenté
         gen_screen(current,NEWGAME);*/
         current->jeu = init_game(current->jeu);
+        current->jeu.players[0].score = 0;
         gen_screen(current,GAME);
         gen_screen(current,current->last_screen_id);
         break;
@@ -113,7 +115,7 @@ void on_click_opts(screen* current,int h){
         *current = gen_option(*current);
         break;
     case 4:
-        gen_screen(current,MENU);
+        gen_screen(current,current->last_screen_id);
         break;
     default:
         break;
@@ -195,6 +197,9 @@ void on_click_pause(screen* current,int h){
     {
     case 0:
         gen_screen(current,SAVE);
+        break;
+    case 1:
+        gen_screen(current,OPTIONS);
         break;
     default:
         load_save(current);

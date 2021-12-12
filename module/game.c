@@ -530,7 +530,7 @@ void descente_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
   printf("game.c    descente_figure\n");
   for (i = 0; i < FIGURE_SIZE; i++)
   {
-    if (g[FIGURE_SIZE - 1][i] > (MAX_COLOR - MAX_COLOR % 2) / 2)
+    if (g[FIGURE_SIZE - 1][i] > 0)
     {
       return;
     }
@@ -539,7 +539,7 @@ void descente_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
   {
     for (j = 0; j < FIGURE_SIZE; j++)
     {
-      if (g[i][j] > (MAX_COLOR - MAX_COLOR % 2) / 2)
+      if (g[i][j] > 0)
       {
         g[i + 1][j] = g[i][j];
         g[i][j] = 0;
@@ -553,7 +553,7 @@ void mouv_gauche_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
   printf("game.c    mouv_gauche_figure\n");
   for (i = 0; i < FIGURE_SIZE; i++)
   {
-    if (g[i][0] > (MAX_COLOR - MAX_COLOR % 2) / 2)
+    if (g[i][0] > 0)
     {
       return;
     }
@@ -562,7 +562,7 @@ void mouv_gauche_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
   {
     for (i = 0; i < FIGURE_SIZE; i++)
     {
-      if (g[i][j] > (MAX_COLOR - MAX_COLOR % 2) / 2)
+      if (g[i][j] > 0)
       {
         g[i][j - 1] = g[i][j];
         g[i][j] = 0;

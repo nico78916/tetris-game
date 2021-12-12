@@ -527,19 +527,19 @@ void update_figures(screen *current)
               j = 1;
             }
           }
-          if(j != 1){
+          if(j == 0){
             mouv_droite_figure(current->jeu.figures[k].blocks);
           }
         }while(j == 0);
         do{
           j = 0;
           for(i=0;i<FIGURE_SIZE;i++){
-            if(current->jeu.figures[k].blocks[0][i] > 0){
+            if(current->jeu.figures[k].blocks[FIGURE_SIZE-1][i] > 0){
               j = 1;
             }
           }
           if(j != 1){
-            montee_figure(current->jeu.figures[k].blocks);
+            descente_figure(current->jeu.figures[k].blocks);
           }
         }while(j == 0);
         print_blocks(current->jeu.figures[k].blocks);
@@ -591,7 +591,6 @@ screen gen_game(screen current)
   current.jeu.y = height / 100;
   current.jeu.width = current.jeu.case_size * NB_COLS;
   current.jeu.height = current.jeu.case_size * NB_LINES;
-  current.jeu.players[0].score = 0;
   MLV_change_frame_rate(24);
   while (est_fini(current.jeu) == 0)
   {
@@ -681,16 +680,6 @@ screen gen_game(screen current)
         while(MLV_get_keyboard_state(MLV_KEYBOARD_p) == MLV_PRESSED || MLV_get_keyboard_state(MLV_KEYBOARD_PAUSE) == MLV_PRESSED || MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED);
         return current;
       }
-      /*}*/
-      /*à la fin de chaque while, vérifier que le bloque n'est pas descendu en bas sinon return 1*/
-      /*for (i = 0; i < NB_LINES; i++)
-      {
-        for (j = 0; j < NB_COLS; j++)
-        {
-         printf("%d ", current.jeu.grid[i][j]);
-        }
-       printf("\n");
-      }*/
       finw = verif_sienbas(current.jeu);
       /*MLV_clear_window(MLV_COLOR_BLACK);*/
       draw_grid(current.jeu);
@@ -702,7 +691,11 @@ screen gen_game(screen current)
           if (current.jeu.grid[j][i] != 0)
           {
             couleur = current.jeu.grid[j][i];
-            MLV_draw_filled_rectangle(current.jeu.x + i * current.jeu.case_size, current.jeu.y + j * current.jeu.case_size, current.jeu.case_size, current.jeu.case_size, code_couleur[couleur].color);
+            if(current.jeu.colors == 1){
+              MLV_draw_filled_rectangle(current.jeu.x + i * current.jeu.case_size, current.jeu.y + j * current.jeu.case_size, current.jeu.case_size, current.jeu.case_size, code_couleur[couleur].color);
+            }else{
+              MLV_draw_filled_rectangle(current.jeu.x + i * current.jeu.case_size, current.jeu.y + j * current.jeu.case_size, current.jeu.case_size, current.jeu.case_size, MLV_rgba(255/couleur,255/couleur,255/couleur,255));
+            }
           }
         }
       }
