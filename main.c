@@ -32,11 +32,6 @@ int main(int argc,char** argv){
     MLV_Button_state LastState = MLV_RELEASED;
     MLV_Color col;
     int r = 255,g = 255,b = 255;
-    player_info in;
-    strcpy(in.name,"TESTA");
-    in.score = 234567;
-    set_score(in);
-    return 0;
     MLV_get_desktop_size(&mw,&mh);
     current.max_height = mh;
     current.max_width = mw;
