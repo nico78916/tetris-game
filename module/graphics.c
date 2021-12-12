@@ -362,9 +362,12 @@ screen gen_pseudo(screen current)
         }
         else if (curTouche == 36)/* Valider */
         {
-          if (strlen(pseudo) < 4)
+          MLV_draw_filled_rectangle(0,height/4,current.width,current.height,MLV_COLOR_BLACK);
+          if ( strlen(pseudo) < 4 || (pseudo[strlen(pseudo)] == '\0' && strlen(pseudo) == 4))
           {
-            MLV_draw_text_with_font(0,current.height/2,"Il faut au minimum 4 caractères",default_font,MLV_COLOR_RED);
+            MLV_draw_text_with_font(0,current.height/4,"Il faut au minimum 4 caractères",default_font,MLV_COLOR_RED);
+          }else if(pseudo[0] < '9' && pseudo[0] > '0'){
+            MLV_draw_text_with_font(0,current.height/4,"Le premier caractère doit être une lettre",default_font,MLV_COLOR_RED);
           }else{
             if(pseudo[strlen(pseudo)-1] == '_'){
               pseudo[strlen(pseudo)-1] = '\0';
@@ -374,14 +377,14 @@ screen gen_pseudo(screen current)
             set_score(infos);
             current.last_screen_id = MENU;
             return current;
+            break;
           }
-          break;
         }
         else if (curTouche == 37)
         {
           if(pseudo[strlen(pseudo) - 1] == '_'){
-            pseudo[strlen(pseudo) - 1] = '\0';
             pseudo[strlen(pseudo) - 2] = '_';
+            pseudo[strlen(pseudo) - 1] = '\0';
           }else{
             pseudo[strlen(pseudo) - 1] = '\0';
           }
