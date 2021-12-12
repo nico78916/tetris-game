@@ -212,7 +212,7 @@ void set_score(player_info infos){
         print("Impossible d'ouvrir scoreboard.txt");
         return;
     }
-    for(i=9;i>0;i--){
+    for(i=9;i>=0;i--){
         if(scoreboard[i].score < infos.score){
             printf("name : %s\n",scoreboard[i].name);
             index--;
@@ -225,7 +225,7 @@ void set_score(player_info infos){
         scoreboard[i].score = scoreboard[i-1].score;
         strcpy(scoreboard[i].name,scoreboard[i-1].name);
     }
-    printf("%s %d\n",scoreboard[index].name,scoreboard[index].score);
+    printf("%d\n",index);
     scoreboard[index].score = infos.score;
     strcpy(scoreboard[i].name,infos.name);
     
