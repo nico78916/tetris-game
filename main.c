@@ -30,6 +30,8 @@ int main(int argc,char** argv){
     int i,count = 0,mouseX,mouseY,h,tw,th;
     screen current;
     MLV_Button_state LastState = MLV_RELEASED;
+    MLV_Color col;
+    int r = 255,g = 255,b = 255;
     srand(time(NULL));
     MLV_get_desktop_size(&mw,&mh);
     current.max_height = mh;
@@ -77,7 +79,7 @@ int main(int argc,char** argv){
     gen_blocks(current.jeu.figures[0].blocks);
 	current.jeu.figures[0].x = current.jeu.x + (rand() % (current.jeu.x + current.jeu.width)) - current.jeu.case_size/2;
     current.jeu.figures[0].y = 0;
-    MLV_change_frame_rate(30);
+    MLV_change_frame_rate(60);
     while(1){/* Entrer dans la boucle principale */
         MLV_delay_according_to_frame_rate();/* 30 FPS */
         if(current.id == MENU){
@@ -91,8 +93,12 @@ int main(int argc,char** argv){
         	erase_figure(current.jeu.figures[0],current.jeu.case_size);
         	draw_figure(current.jeu.figures[0],current.jeu.case_size,current.jeu.colors);
         	current.jeu.figures[0].y += current.jeu.case_size;
-        	MLV_get_size_of_text_with_font("TETE RISSE",&tw,&th,title_font);
-    		MLV_draw_text_with_font(width/2-tw/2,height/10-th/2,"TETE RISSE",title_font,MLV_COLOR_WHITE);
+                r = (r-(rand() % 10))%255;
+                g = (g-(rand() % 10))%255;
+                b = (b-(rand() % 10))%255;
+                col = MLV_rgba(r,g,b,255);
+        	    MLV_get_size_of_text_with_font("TETE RISSE",&tw,&th,title_font);
+    		    MLV_draw_text_with_font(width/2-tw/2,height/10-th/2,"TETE RISSE",title_font,col);
         }
         
         for(i=0;i<current.btncount;i++){

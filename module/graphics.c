@@ -360,7 +360,7 @@ screen gen_pseudo(screen current)
           if(strlen(pseudo) < MAX_STR)
             pseudo[i] = clav.alpha[curTouche - 10].label[0];
         }
-        else if (curTouche == 36)
+        else if (curTouche == 36)/* Valider */
         {
           if (strlen(pseudo) < 4)
           {
@@ -379,7 +379,12 @@ screen gen_pseudo(screen current)
         }
         else if (curTouche == 37)
         {
-          pseudo[strlen(pseudo) - 1] = '\0';
+          if(pseudo[strlen(pseudo) - 1] == '_'){
+            pseudo[strlen(pseudo) - 1] = '\0';
+            pseudo[strlen(pseudo) - 2] = '_';
+          }else{
+            pseudo[strlen(pseudo) - 1] = '\0';
+          }
         }
         else if (curTouche == 38)
         {
@@ -438,6 +443,8 @@ screen gen_over(screen current)
   c.width = current.width / 2;
   if(current.jeu.players[0].score < scoreboard[9].score){
     c.label = "RETOURNER AU MENU";
+    current.jeu.players[0].score = 0;
+    write_save(&current.jeu);
   }else{
     c.label = "ENTRER MON PSEUDO";
   }
@@ -708,6 +715,23 @@ screen gen_game(screen current)
     /*appel de la fonction pour vérifier si le jeu est fini et recommence au premier while*/
   }
   printf("est_fini1\n");
+  for(i=NB_LINES-1;i>=0;i--){
+    if(i%2 == 0){
+      for(j=0;j<NB_COLS;j++){
+      MLV_delay_according_to_frame_rate();
+      MLV_draw_filled_rectangle(current.jeu.x + j * current.jeu.case_size, current.jeu.y + i * current.jeu.case_size, current.jeu.case_size, current.jeu.case_size, code_couleur[9].color);
+      MLV_actualise_window();
+      }
+    }else{
+      for(j=NB_COLS-1;j>=0;j--){
+        MLV_delay_according_to_frame_rate();
+        MLV_draw_filled_rectangle(current.jeu.x + j * current.jeu.case_size, current.jeu.y + i * current.jeu.case_size, current.jeu.case_size, current.jeu.case_size, code_couleur[9].color);
+        MLV_actualise_window();
+      }
+    }
+  }
+  current.jeu = init_game(current.jeu);
+  write_save(&current.jeu);
   current.id = GAME;
   return current;
 }

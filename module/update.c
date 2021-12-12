@@ -90,6 +90,7 @@ void on_click_menu(screen* current,int h){
         gen_screen(current,NEWGAME);*/
         current->jeu = init_game(current->jeu);
         current->jeu.players[0].score = 0;
+        current->jeu.slot = 0;
         gen_screen(current,GAME);
         gen_screen(current,current->last_screen_id);
         break;
@@ -150,6 +151,7 @@ void on_click_load(screen* current,int h){
     default:
         current->jeu.slot = h+1;
         load_save(current);
+        current->jeu.slot = 0;
         gen_screen(current,GAME);
         gen_screen(current,current->last_screen_id);
         break;
@@ -166,6 +168,7 @@ void on_click_save(screen* current,int h){
     default:
         current->jeu.slot = h+1;
         write_save(&current->jeu);
+        current->jeu.slot = 0;
         current->last_screen_id = GAME;
         gen_screen(current,PAUSE);
         break;
@@ -203,7 +206,9 @@ void on_click_pause(screen* current,int h){
         break;
     default:
         load_save(current);
+        current->id = PAUSE;
         gen_screen(current,GAME);
+        gen_screen(current,current->last_screen_id);
         break;
     }
 }
@@ -215,7 +220,13 @@ void update_frame(screen* current){
 
     if(MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED){
             while(MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED);
-            gen_screen(current,current->last_screen_id);
+            if(current->last_screen_id == GAME){
+                load_save(current);
+                gen_screen(current,GAME);
+                gen_screen(current,current->last_screen_id);
+            }else{
+                gen_screen(current,current->last_screen_id);
+            }
     }
 }
 
