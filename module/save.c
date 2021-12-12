@@ -152,7 +152,7 @@ void write_save(game *g){
             k++;
         }
     }
-    str[k] = ' ';
+    str[k] = '\0';
     k = 0;
     for (i = 0; i < 5; i++)
     {
@@ -170,7 +170,7 @@ void write_save(game *g){
         k++;
     }
     k--;
-    fig[k] = ' ';
+    fig[k] = '\0';
     printf("game :\n %s\n",str);
     printf("figures : \n %s\n",fig);
     fprintf(save,"score:{%d};game:{%s};figures:{%s}", g->players[0].score,str,fig);

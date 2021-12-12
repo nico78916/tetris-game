@@ -78,10 +78,18 @@ void on_click_menu(screen* current,int h){
     case 2: 
         gen_screen(current,LOAD);
         break;
-    case 0:
-        gen_screen(current,NEWGAME);
+    case 1:
+        current->jeu.slot = 0;
+        load_save(current);
+        gen_screen(current,GAME);
+        gen_screen(current,current->last_screen_id);
         break;
     default:
+        /* écran réservé pour le multi mais ce dernié n'a pas été implémenté
+        gen_screen(current,NEWGAME);*/
+        current->jeu = init_game(current->jeu);
+        gen_screen(current,GAME);
+        gen_screen(current,current->last_screen_id);
         break;
     }
 }
