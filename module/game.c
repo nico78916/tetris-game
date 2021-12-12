@@ -138,14 +138,18 @@ void rot_m90(int dest[FIGURE_SIZE][FIGURE_SIZE])
   reverse_col(dest);
 }
 
-void gen_blocks(int block[FIGURE_SIZE][FIGURE_SIZE])
+void gen_blocks(game *g,int index)
 {
   int i, j, rnd, x, y, lastrnd = -1;
   printf("game.c    gen_blocks\n");
-  rnd = rand() % 4 + 1;
+  if(g->players[0].score > 1000){
+    rnd = rand() % 6 + 2;
+  }else{
+    rnd = rand() % 4 + 1;
+  }
   for (i = 0; i < FIGURE_SIZE; i++)
     for (j = 0; j < FIGURE_SIZE; j++)
-      block[i][j] = 0;
+      g->figures[index].blocks[i][j] = 0;
   /*
     Algo :
     On démarre au centre de la matrice (x = y = FIGURE_SIZE / 2)
@@ -159,7 +163,7 @@ void gen_blocks(int block[FIGURE_SIZE][FIGURE_SIZE])
   y = x;
   for (i = 0; i < rnd; i++)
   {
-    block[x][y] = 1;
+    g->figures[index].blocks[x][y] = 1;
     j = rand() % 4;
     if (j == lastrnd)
     {
@@ -210,9 +214,9 @@ void gen_blocks(int block[FIGURE_SIZE][FIGURE_SIZE])
   rnd = rand() % 4;
   for (i = 0; i < rnd; i++)
   {
-    rot_90(block);
+    rot_90(g->figures[index].blocks);
   }
-  set_colors(block);
+  set_colors(g->figures[index].blocks);
 }
 
 void next_turn(screen *current)
@@ -223,7 +227,7 @@ void next_turn(screen *current)
   {
     current->jeu.figures[i - 1] = current->jeu.figures[i];
   }
-  gen_blocks(current->jeu.figures[MAX_FIGURES - 1].blocks);
+  gen_blocks(&(current->jeu),MAX_FIGURES-1);
   write_save(&current->jeu);
   for (i = 0; i < MAX_FIGURES; i++)
     for (j = 0; j < FIGURE_SIZE; j++)
@@ -240,7 +244,7 @@ game init_game(game g)
   g.slot = 0;
   for (i = 0; i < MAX_FIGURES; i++)
   {
-    gen_blocks(g.figures[i].blocks);
+    gen_blocks(&g,i);
     print_blocks(g.figures[i].blocks);
   }
   for (i = 0; i < NB_LINES; i++)

@@ -672,7 +672,7 @@ screen gen_game(screen current)
           cooldown = 2;
         }
       }
-      else if (MLV_get_keyboard_state(MLV_KEYBOARD_UP) == MLV_PRESSED && compteur > 3)
+      else if (MLV_get_keyboard_state(MLV_KEYBOARD_UP) == MLV_PRESSED && compteur > 3 && current.jeu.players[0].score < 2500)
       { /*si flèche droite, mouvement à droite*/
         if(cooldown == 0){
         current.jeu = mouv_rot(current.jeu, pmouv_x, pmouv_y);
@@ -718,6 +718,9 @@ screen gen_game(screen current)
     /*appel de la fonction pour vérifier si le jeu est fini et recommence au premier while*/
   }
   printf("est_fini1\n");
+  current.cursong = MLV_load_music("game_over.wav");
+  MLV_play_music(current.cursong,1.0,1);
+  MLV_change_frame_rate(NB_LINES*NB_COLS/14);
   for(i=NB_LINES-1;i>=0;i--){
     if(i%2 == 0){
       for(j=0;j<NB_COLS;j++){
@@ -841,6 +844,11 @@ screen gen_save(screen current)
 void toggleSound(screen *current)
 {
   current->jeu.sound = (current->jeu.sound + 1) % 2;
+  if(current->jeu.sound == 1){
+    MLV_play_music(current->cursong,1.0,-1);
+  }else{
+    MLV_stop_music();
+  }
 }
 
 void toggleColor(screen *current)
@@ -867,7 +875,7 @@ screen switch_widow_type(screen current)
     current.height = current.max_height;
   }
   print("END");
-  return gen_option(current);
+  return current;
 }
 
 screen change_resolution(screen current, int rw, int rh)
@@ -880,7 +888,7 @@ screen change_resolution(screen current, int rw, int rh)
   current.height = rh;
   current.width = rw;
   MLV_change_window_size(current.width, current.height);
-  return gen_option(current);
+  return current;
 }
 
 int htoi(char hex)

@@ -61,6 +61,17 @@ int main(int argc,char** argv){
     default_font = MLV_load_font("./ressources/default.ttf",20);
     western_font = MLV_load_font("./ressources/main_font.ttf",20);
     title_font = MLV_load_font("./ressources/main_font.ttf",50);
+
+    if(MLV_init_audio() == -1){
+        print("Erreur lors du chargement des bibliotheques audio");
+        exit(-1);
+    };
+    current.cursong = MLV_load_music( "title.ogg" );
+    if(current.cursong == NULL){
+        print("Erreur lors du chargement de la musique");
+        exit(-1);
+    }
+    MLV_play_music( current.cursong, 1.0, -1 );
     current.id = MENU;
     current.height = height;
     current.width = width;
@@ -75,7 +86,7 @@ int main(int argc,char** argv){
     current.jeu.height = current.jeu.case_size * NB_LINES;
     current.jeu.x = (current.width/2 - (current.jeu.width)/2);
     current.jeu.y = height/100;
-    gen_blocks(current.jeu.figures[0].blocks);
+    gen_blocks(&current.jeu,0);
 	current.jeu.figures[0].x = current.jeu.x + (rand() % (current.jeu.x + current.jeu.width)) - current.jeu.case_size/2;
     current.jeu.figures[0].y = 0;
     MLV_change_frame_rate(60);
@@ -84,7 +95,7 @@ int main(int argc,char** argv){
         if(current.id == MENU){
         	/* ON UPDATE L'ARRIERE PLAN */
         	if(count == 29){
-				gen_blocks(current.jeu.figures[0].blocks);
+				gen_blocks(&current.jeu,0);
 
 				current.jeu.figures[0].x = current.jeu.x + (rand() % (current.jeu.x + current.jeu.width)) - current.jeu.case_size/2;
 				current.jeu.figures[0].y = 0;
@@ -97,7 +108,7 @@ int main(int argc,char** argv){
                 b = (b-(rand() % 10))%255;
                 col = MLV_rgba(r,g,b,255);
         	    MLV_get_size_of_text_with_font("TETE RISSE",&tw,&th,title_font);
-    		    MLV_draw_text_with_font(width/2-tw/2,height/10-th/2,"TETE RISSE",title_font,col);
+    		    MLV_draw_text_with_font(current.width/2-tw/2,current.height/10-th/2,"TETE RISSE",title_font,col);
         }
         
         for(i=0;i<current.btncount;i++){

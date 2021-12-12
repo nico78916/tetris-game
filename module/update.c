@@ -27,12 +27,16 @@ void gen_screen(screen *current,screen_id id){
     switch (id)
     {
     case MENU:
+        MLV_stop_music();
+        current->cursong = MLV_load_music("title.wav");
+        MLV_play_music(current->cursong,1.0,-1);
         *current = gen_menu(*current);
         break;
     case OPTIONS:
     *current = gen_option(*current);
     break;
     case GAME:
+        MLV_stop_music();
         *current = gen_game(*current);
     break;
     case NEWGAME:
@@ -103,9 +107,12 @@ void on_click_opts(screen* current,int h){
     {
     case 0:
         *current = change_resolution(*current,resolution_16_9_w[(int_indexOf(current->width,resolution_16_9_w,NB_RESOLUTION) + 1) %NB_RESOLUTION],resolution_16_9_l[(int_indexOf(current->height,resolution_16_9_l,NB_RESOLUTION) + 1) %NB_RESOLUTION]);
+        current->id = current->last_screen_id;
+        gen_screen(current,OPTIONS);
         break;
     case 1:
-        *current = switch_widow_type(*current);
+        *current = switch_widow_type(*current);current->id = current->last_screen_id;
+        gen_screen(current,OPTIONS);
         break;
     case 3:
         toggleColor(current);
@@ -220,11 +227,12 @@ void update_frame(screen* current){
 
     if(MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED){
             while(MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED);
-            if(current->last_screen_id == GAME){
+            if(current->last_screen_id == GAME && (current->id != OVER && current->id != PSEUDO)){
                 load_save(current);
                 gen_screen(current,GAME);
-                gen_screen(current,current->last_screen_id);
-            }else{
+            }
+            if(current->id != OVER && current->id != PSEUDO){
+                print("APOLA");
                 gen_screen(current,current->last_screen_id);
             }
     }

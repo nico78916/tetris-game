@@ -33,7 +33,7 @@ void rot_m90(int dest[][FIGURE_SIZE]);
 /**
  * Genere les blocks de manière aléatoire
 */
-void gen_blocks(int block[][FIGURE_SIZE]);
+void gen_blocks(game *g,int index);
 
 /**
  * Affiche la matrice
