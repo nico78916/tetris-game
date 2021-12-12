@@ -79,9 +79,9 @@ void montee_figure(int g[FIGURE_SIZE][FIGURE_SIZE]);
 
 void descente_figure(int g[FIGURE_SIZE][FIGURE_SIZE]);
 
-game mouv_droite(game g, int compteur, int y);
+game mouv_droite(game g, int compteur, int *y);
 
-game mouv_gauche(game g, int y);
+game mouv_gauche(game g, int compteur, int *y);
 
 void mouv_gauche_figure(int g[FIGURE_SIZE][FIGURE_SIZE]);
 
