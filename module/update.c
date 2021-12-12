@@ -167,7 +167,13 @@ void on_click_over(screen* current,int h){
     switch (h)
     {
     case 0:
-        gen_screen(current,PSEUDO);
+        if(strcmp(current->buttons[0].label,"RETOURNER AU MENU") == 0){
+            gen_screen(current,MENU);
+            current->last_screen_id = MENU;
+        }else{
+            gen_screen(current,PSEUDO);
+            gen_screen(current,MENU);
+        }
         break;
     default:
         gen_screen(current,MENU);

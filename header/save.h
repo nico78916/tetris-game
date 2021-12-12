@@ -31,4 +31,6 @@ void load_save(screen *current);
 */
 void write_save(game *g);
 
-void get_scoreboard(char* names[10],int scores[10]);
+void get_scoreboard(player_info scoreboard[10]);
+
+void set_score(player_info infos);

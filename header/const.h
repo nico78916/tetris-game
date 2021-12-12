@@ -84,6 +84,14 @@ typedef struct{
 	button options[CLAVIER_OPTIONS];
 }clavier;
 
+typedef struct 
+{
+    char name[MAX_STR];
+    int score;
+} player_info;
+
+
+
 MLV_Font* default_font; 
 MLV_Font* western_font;
 MLV_Font* title_font;

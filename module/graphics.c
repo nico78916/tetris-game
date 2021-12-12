@@ -173,6 +173,7 @@ screen gen_pseudo(screen current)
   char *touches[43] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "\n", "A", "Z", "E", "R", "T", "Y", "U", "I", "O", "P", "\n", "Q", "S", "D", "F", "G", "H", "J", "K", "L", "M", "\n", "W", "X", "C", "V", "B", "N", "\n", "VALIDER", "CORRIGER", "EFFACER"};
   char pseudo[MAX_STR] = "";
   clavier clav;
+  player_info infos;
   printf("graphics.c    gen_pseudo\n");
   current.btncount = 0;
   MLV_clear_window(MLV_COLOR_BLACK);
@@ -342,26 +343,37 @@ screen gen_pseudo(screen current)
     {
       if (cooldown <= 0)
       {
-        printf("curTouche = %d\n", curTouche);
         cooldown = 10;
         i = strlen(pseudo);
         if (pseudo[i - 1] == '_')
         {
           i--;
-          printf("i=%d\n", i);
         }
         if (curTouche < 10)
         {
-          pseudo[i] = clav.numerique[curTouche].label[0];
+          if(strlen(pseudo) < MAX_STR){
+            pseudo[i] = clav.numerique[curTouche].label[0];
+          }
         }
         else if (curTouche < 36)
         {
-          pseudo[i] = clav.alpha[curTouche - 10].label[0];
+          if(strlen(pseudo) < MAX_STR)
+            pseudo[i] = clav.alpha[curTouche - 10].label[0];
         }
         else if (curTouche == 36)
         {
-          if (strlen(pseudo) > 4)
+          if (strlen(pseudo) < 4)
           {
+            MLV_draw_text_with_font(0,current.height/2,"Il faut au minimum 4 caractères",default_font,MLV_COLOR_RED);
+          }else{
+            if(pseudo[strlen(pseudo)-1] == '_'){
+              pseudo[strlen(pseudo)-1] = '\0';
+            }
+            strcpy(infos.name, pseudo);
+            infos.score = current.jeu.players[0].score;
+            set_score(infos);
+            current.last_screen_id = MENU;
+            return current;
           }
           break;
         }
@@ -398,10 +410,10 @@ screen gen_over(screen current)
   int a, b, d, e, f, g, i;
   char score[256];
   char scored[256];
-  char *names[10];
-  int scores[10];
+  player_info scoreboard[10];
   button c;
-  get_scoreboard(names, scores);
+  MLV_Color col;
+  get_scoreboard(scoreboard);
   sprintf(score, "SCORE : %d", current.jeu.players[0].score);
   MLV_get_size_of_text_with_font("GAME OVER", &a, &b, title_font);
   MLV_draw_text_with_font(current.width / 2 - a / 2, b, "GAME OVER", title_font, MLV_COLOR_WHITE);
@@ -411,15 +423,24 @@ screen gen_over(screen current)
   MLV_draw_text_box_with_font(current.width / 4, current.height - current.height / 8, current.width / 2, current.height / 16, "ENTRER MON PSEUDO", default_font, 20, MLV_COLOR_GREY, MLV_COLOR_BLACK, MLV_COLOR_WHITE, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
   for (i = 0; i < 10; i++)
   {
-    MLV_get_size_of_text_with_font(names[i], &f, &g, default_font);
-    MLV_draw_text_with_font(current.width / 2 - f, b * 2 + e * 2 + g * (i + 1), names[i], default_font, MLV_COLOR_WHITE);
-    sprintf(scored, "%d", scores[i]);
+    if(scoreboard[i].score > current.jeu.players[0].score){
+      col = MLV_COLOR_RED;
+    }else{
+      col = MLV_COLOR_GREEN;
+    }
+    MLV_get_size_of_text_with_font(scoreboard[i].name, &f, &g, default_font);
+    MLV_draw_text_with_font(current.width / 2 - f, b * 2 + e * 2 + g * (i + 1), scoreboard[i].name, default_font, col);
+    sprintf(scored, "%d", scoreboard[i].score);
     MLV_get_size_of_text_with_font(scored, &f, &g, default_font);
-    MLV_draw_text_with_font(current.width / 2 + f, b * 2 + e * 2 + g * (i + 1), scored, default_font, MLV_COLOR_WHITE);
+    MLV_draw_text_with_font(current.width / 2 + f, b * 2 + e * 2 + g * (i + 1), scored, default_font, col);
   }
   c.height = current.height / 16;
   c.width = current.width / 2;
-  c.label = "ENTRER MON PSEUDO";
+  if(current.jeu.players[0].score < scoreboard[9].score){
+    c.label = "RETOURNER AU MENU";
+  }else{
+    c.label = "ENTRER MON PSEUDO";
+  }
   c.x = current.width / 4;
   c.y = current.height - current.height / 8;
   current.btncount = 1;
@@ -488,32 +509,43 @@ void draw_figure(figure fig, int case_size, int color_on)
 void update_figures(screen *current)
 {
   int i, j, k;
+  char score[256] = "";
   code_couleur code_couleur[MAX_COLOR];
   init_code_couleur(code_couleur);
   /*print_blocks(fig.blocks);*/
-  for (k = 1; k < MAX_FIGURES; k++)/* figure[0] c'est la figure qui tombe actuellement donc pas besoin*/
-    for (i = 0; i < FIGURE_SIZE; i++)
-    {
-      for (j = 0; j < FIGURE_SIZE; j++)
-      {
+  sprintf(score, "SCORE : %d",current->jeu.players[0].score);
+  MLV_draw_text_with_font(current->jeu.width + current->jeu.x + FIGURE_SIZE * current->jeu.case_size,0,score,western_font,MLV_COLOR_GREEN);
+  for (k = 1; k < MAX_FIGURES; k++){/* figure[0] c'est la figure qui tombe actuellement donc pas besoin*/
+    print_blocks(current->jeu.figures[k].blocks);
         current->jeu.figures[k].x = current->jeu.width + current->jeu.x;
         current->jeu.figures[k].y = FIGURE_SIZE * current->jeu.case_size * (k-1);
+        print("OK");
+        do{
+          j = 0;
+          for(i=0;i<FIGURE_SIZE;i++){
+            if(current->jeu.figures[k].blocks[i][FIGURE_SIZE-1] > 0){
+              j = 1;
+            }
+          }
+          if(j != 1){
+            mouv_droite_figure(current->jeu.figures[k].blocks);
+          }
+        }while(j == 0);
+        do{
+          j = 0;
+          for(i=0;i<FIGURE_SIZE;i++){
+            if(current->jeu.figures[k].blocks[0][i] > 0){
+              j = 1;
+            }
+          }
+          if(j != 1){
+            montee_figure(current->jeu.figures[k].blocks);
+          }
+        }while(j == 0);
+        print_blocks(current->jeu.figures[k].blocks);
         draw_figure(current->jeu.figures[k], current->jeu.case_size, current->jeu.colors);
-      }
-    }
-}
-
-void print_block(int blocks[FIGURE_SIZE][FIGURE_SIZE])
-{
-  int i, j;
-  for (i = 0; i < FIGURE_SIZE; i++)
-  {
-    for (j = 0; j < FIGURE_SIZE; j++)
-    {
-      printf("%d ", blocks[i][j]);
-    }
-    printf("\n");
   }
+    printf("(%d, %d)\n",current->jeu.figures[k].x,current->jeu.figures[k].y);
 }
 
 screen gen_pause(screen current)
@@ -545,7 +577,7 @@ screen gen_pause(screen current)
 
 screen gen_game(screen current)
 {
-  int height, i, j, finw = 0, count = 0, couleur, compteur, mouv_x, mouv_y;
+  int height, i, j, finw = 0, count = 0, couleur, compteur, mouv_x, mouv_y,*pmouv_x,*pmouv_y, cooldown = 2, sec_counter = 0;
   code_couleur code_couleur[MAX_COLOR];
   printf("graphics.c    gen_game\n");
   init_code_couleur(code_couleur);
@@ -553,18 +585,13 @@ screen gen_game(screen current)
   height = current.height;
   height = current.height;
   current.id = GAME;
-  current.last_screen_id = PAUSE;
+  current.last_screen_id = OVER;
   current.jeu.case_size = height / NB_LINES;
   current.jeu.x = (current.width / 2 - (NB_COLS * current.jeu.case_size) / 2);
   current.jeu.y = height / 100;
   current.jeu.width = current.jeu.case_size * NB_COLS;
   current.jeu.height = current.jeu.case_size * NB_LINES;
-
-  /*ce qu'on peut faire, c'est mettre une couleur unique pour les cubes déjà posés comme ça on peut intégrer le bloc qui descend dans la matrice
-      la valeur 0 pour le noir, 1 pour les cubes en bas, ducoup pour faire un traitement sur le cube qui descend, on dit :
-      pour chaque valeur différente de 0 et 1, alors faire traitement*/
-  /*ça permet d'avoir une seule matrice à gérer au lieu de 2 matrices supperposées mais il ne serait pas possible de faire les rotations*/
-  /*penser à ajouter time.h*/
+  current.jeu.players[0].score = 0;
   MLV_change_frame_rate(24);
   while (est_fini(current.jeu) == 0)
   {
@@ -573,12 +600,20 @@ screen gen_game(screen current)
     compteur = 0;
     mouv_x = 0;
     mouv_y = 5;
-    print_block(current.jeu.figures[0].blocks);
+    pmouv_x = &mouv_x;
+    pmouv_y = &mouv_y;
     gen_ligne(current.jeu.grid, current.jeu.figures[0].blocks, compteur, mouv_y);
     compteur += 1;
     while (finw == 0)
-    { /*boucle qui fait tomber le bloque et attend les instructions*/
+    {
       MLV_delay_according_to_frame_rate();
+      sec_counter++;
+      if(sec_counter >= 24){
+        (current.jeu.players[0]).score++;
+        sec_counter = 0;
+      }
+      cooldown --;
+      cooldown = cooldown <= 0 ? 0 : cooldown;
       if (count >= 4)
       {
         if (verif_sienbas(current.jeu) == 0)
@@ -616,17 +651,26 @@ screen gen_game(screen current)
       /*vérifier que le coup est valide et le faire le cas échéant*/
       if (MLV_get_keyboard_state(MLV_KEYBOARD_LEFT) == MLV_PRESSED)
       { /*si flèche gauche, mouvement à gauche*/
-        current.jeu = mouv_gauche(current.jeu, mouv_y);
-        mouv_y -= 1;
+        if(cooldown == 0){
+          current.jeu = mouv_gauche(current.jeu, mouv_y);
+          mouv_y -= 1;
+          cooldown = 2;
+        }
       }
       else if (MLV_get_keyboard_state(MLV_KEYBOARD_RIGHT) == MLV_PRESSED)
       { /*si flèche droite, mouvement à droite*/
-        current.jeu = mouv_droite(current.jeu, compteur, mouv_y);
-        mouv_y += 1;
+        if(cooldown == 0){
+          current.jeu = mouv_droite(current.jeu, compteur, mouv_y);
+          mouv_y += 1;
+          cooldown = 2;
+        }
       }
       else if (MLV_get_keyboard_state(MLV_KEYBOARD_UP) == MLV_PRESSED && compteur > 3)
       { /*si flèche droite, mouvement à droite*/
-        current.jeu = mouv_rot(current.jeu, mouv_x, mouv_y);
+        if(cooldown == 0){
+        current.jeu = mouv_rot(current.jeu, pmouv_x, pmouv_y);
+        cooldown = 4;
+        }
       }
       else if (MLV_get_keyboard_state(MLV_KEYBOARD_p) == MLV_PRESSED || MLV_get_keyboard_state(MLV_KEYBOARD_PAUSE) == MLV_PRESSED || MLV_get_keyboard_state(MLV_KEYBOARD_ESCAPE) == MLV_PRESSED)
       {
@@ -639,14 +683,14 @@ screen gen_game(screen current)
       }
       /*}*/
       /*à la fin de chaque while, vérifier que le bloque n'est pas descendu en bas sinon return 1*/
-      for (i = 0; i < NB_LINES; i++)
+      /*for (i = 0; i < NB_LINES; i++)
       {
         for (j = 0; j < NB_COLS; j++)
         {
          printf("%d ", current.jeu.grid[i][j]);
         }
        printf("\n");
-      }
+      }*/
       finw = verif_sienbas(current.jeu);
       /*MLV_clear_window(MLV_COLOR_BLACK);*/
       draw_grid(current.jeu);

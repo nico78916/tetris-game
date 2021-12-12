@@ -87,7 +87,7 @@ void mouv_gauche_figure(int g[FIGURE_SIZE][FIGURE_SIZE]);
 
 void mouv_droite_figure(int g[FIGURE_SIZE][FIGURE_SIZE]);
 
-game mouv_rot(game g, int x, int y);
+game mouv_rot(game g, int *x, int *y);
 
 void fixer_bloque(screen *current);
 

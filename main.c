@@ -66,6 +66,8 @@ int main(int argc,char** argv){
     current.jeu.colors = 1;
     current.jeu.sound = 1;
     current.jeu.ply_count = 1;
+    current.jeu.players[0].name = "";
+    current.jeu.players[0].score = 0;
     current = gen_menu(current);
     current.jeu.case_size = height/NB_LINES;
     current.jeu.width = current.jeu.case_size * NB_COLS;
@@ -75,8 +77,9 @@ int main(int argc,char** argv){
     gen_blocks(current.jeu.figures[0].blocks);
 	current.jeu.figures[0].x = current.jeu.x + (rand() % (current.jeu.x + current.jeu.width)) - current.jeu.case_size/2;
     current.jeu.figures[0].y = 0;
+    MLV_change_frame_rate(30);
     while(1){/* Entrer dans la boucle principale */
-        MLV_wait_milliseconds(1000/30);/* 30 FPS */
+        MLV_delay_according_to_frame_rate();/* 30 FPS */
         if(current.id == MENU){
         	/* ON UPDATE L'ARRIERE PLAN */
         	if(count == 29){
@@ -118,7 +121,7 @@ int main(int argc,char** argv){
         
         count++;
         if(count >= 30){
-            update_seconde();
+            update_seconde(&current);
             count = 0;
         }
         MLV_update_window();

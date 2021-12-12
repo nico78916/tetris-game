@@ -152,7 +152,7 @@ void write_save(game *g){
             k++;
         }
     }
-    str[k] = '\0';
+    str[k] = ' ';
     k = 0;
     for (i = 0; i < 5; i++)
     {
@@ -170,17 +170,17 @@ void write_save(game *g){
         k++;
     }
     k--;
-    fig[k] = '\0';
+    fig[k] = ' ';
     printf("game :\n %s\n",str);
     printf("figures : \n %s\n",fig);
     fprintf(save,"score:{%d};game:{%s};figures:{%s}", g->players[0].score,str,fig);
     fclose(save);
 }
 
-void get_scoreboard(char* names[10],int scores[10]){
+void get_scoreboard(player_info scoreboard[10]){
     FILE * save;
     int i = 0;
-    char a[64];
+    char a[64] = "";
     int b;
     save = fopen( "./save/scoreboard.txt", "r" );
     if ( save == NULL ) {
@@ -188,11 +188,49 @@ void get_scoreboard(char* names[10],int scores[10]){
         return;
     }
     while(fscanf(save,"%s\n%d",a,&b) == 2 && i < 10){
-       printf("%s %d %d\n",a,b,i);
-        names[i] = a;
-        scores[i] = b;
+        printf("%s %d %d\n",a,b,i);
+        strcpy(scoreboard[i].name,a);
+        scoreboard[i].score = b;
         i++;
     }
-    print("TEST");
+    if(i != 10){
+        printf("[Erreur|Fatale] Scoreboard corrompu %d\n",i);
+        exit(-1);
+    }
+    print("Fin");
     fclose(save);
+}
+
+void set_score(player_info infos){
+    player_info scoreboard[10];
+    int i,index = 10;
+    FILE * saved;
+    print("STARTING REGISTERING NEW SCORE");
+    get_scoreboard(scoreboard);
+    saved = fopen( "./save/scoreboard.txt", "w" );
+    if ( saved == NULL ) {
+        print("Impossible d'ouvrir scoreboard.txt");
+        return;
+    }
+    for(i=9;i>0;i--){
+        if(scoreboard[i].score < infos.score){
+            printf("name : %s\n",scoreboard[i].name);
+            index--;
+        }
+    }
+    if(index == 10){
+        return;
+    }
+    for(i=9;i>index;i--){
+        scoreboard[i].score = scoreboard[i-1].score;
+        strcpy(scoreboard[i].name,scoreboard[i-1].name);
+    }
+    printf("%s %d\n",scoreboard[index].name,scoreboard[index].score);
+    scoreboard[index].score = infos.score;
+    strcpy(scoreboard[i].name,infos.name);
+    
+    for(i=0;i<10;i++){
+        fprintf(saved,"%s\n%d\n",scoreboard[i].name,scoreboard[i].score);
+    }
+    print("END OF NEW SCORE");
 }
