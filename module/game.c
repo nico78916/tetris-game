@@ -362,7 +362,7 @@ game descente(game g)
   return g;
 }
 
-game mouv_gauche(game g, int y)
+game mouv_gauche(game g, int compteur, int *y)
 {
   int i, j;
   printf("game.c    mouv_gauche\n");
@@ -373,7 +373,7 @@ game mouv_gauche(game g, int y)
       return g;
     }
   }
-  if (y == 0)
+  if (*y == 0 && compteur < FIGURE_SIZE)
   {
     return g;
   }
@@ -398,11 +398,11 @@ game mouv_gauche(game g, int y)
       }
     }
   }
-  print("FIN DE LA FONCTION");
+  *y = *y -1;
   return g;
 }
 
-game mouv_droite(game g, int compteur, int y)
+game mouv_droite(game g, int compteur, int *y)
 {
   int i, j;
   printf("game.c    mouv_droite\n");
@@ -423,7 +423,7 @@ game mouv_droite(game g, int compteur, int y)
       }
     }
   }
-  if (y + FIGURE_SIZE - 1 >= NB_COLS && compteur < FIGURE_SIZE)
+  if (*y + FIGURE_SIZE - 1 >= NB_COLS && compteur < FIGURE_SIZE)
   {
     return g;
   }
@@ -438,6 +438,7 @@ game mouv_droite(game g, int compteur, int y)
       }
     }
   }
+  *y = *y + 1;
   return g;
 }
 

@@ -631,7 +631,7 @@ screen gen_game(screen current)
         {
           current.jeu = descente(current.jeu);
           count = 0;
-          mouv_x += 2;
+          mouv_x += 1;
           gen_ligne(current.jeu.grid, current.jeu.figures[0].blocks, compteur, mouv_y);
           compteur += 1;
         }
@@ -652,16 +652,14 @@ screen gen_game(screen current)
       if (MLV_get_keyboard_state(MLV_KEYBOARD_LEFT) == MLV_PRESSED)
       { /*si flèche gauche, mouvement à gauche*/
         if(cooldown == 0){
-          current.jeu = mouv_gauche(current.jeu, mouv_y);
-          mouv_y -= 1;
+          current.jeu = mouv_gauche(current.jeu, compteur, pmouv_y);
           cooldown = 2;
         }
       }
       else if (MLV_get_keyboard_state(MLV_KEYBOARD_RIGHT) == MLV_PRESSED)
       { /*si flèche droite, mouvement à droite*/
         if(cooldown == 0){
-          current.jeu = mouv_droite(current.jeu, compteur, mouv_y);
-          mouv_y += 1;
+          current.jeu = mouv_droite(current.jeu, compteur, pmouv_y);
           cooldown = 2;
         }
       }
