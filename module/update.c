@@ -12,7 +12,6 @@ void quit_game(screen* current){
     MLV_free_font(western_font);
     MLV_free_font(title_font);
     MLV_stop_music();
-    /*MLV_free_music(current.cursong);*/
     MLV_free_audio();
     MLV_free_window();
     if(current->jeu.ply_count == 1){
@@ -67,7 +66,6 @@ void return_menu(screen* current){
 }
 
 void on_click_menu(screen* current,int h){
-   printf("update.c    on_click_menu\n");
     switch (h)
     {
     case 4:
@@ -87,8 +85,6 @@ void on_click_menu(screen* current,int h){
         break;
     
     case 0:
-        /* écran réservé pour le multi mais ce dernié n'a pas été implémenté
-        gen_screen(current,NEWGAME);*/
         current->jeu = init_game(current->jeu);
         current->jeu.players[0].score = 0;
         current->jeu.slot = 0;
@@ -99,7 +95,6 @@ void on_click_menu(screen* current,int h){
 }
 
 void on_click_opts(screen* current,int h){
-   printf("update.c    on_click_opts\n");
     switch (h)
     {
     case 0:
@@ -113,7 +108,7 @@ void on_click_opts(screen* current,int h){
         break;
     case 3:
         toggleColor(current);
-        *current = gen_option(*current);/* on ne veut pas changer l'encien écran */
+        *current = gen_option(*current);
         break;
     case 2:
         toggleSound(current);
@@ -128,7 +123,6 @@ void on_click_opts(screen* current,int h){
 }
 
 void on_click_load(screen* current,int h){
-   printf("update.c    on_click_ng\n");
     switch (h)
     {
     case 5:
@@ -145,7 +139,6 @@ void on_click_load(screen* current,int h){
 }
 
 void on_click_save(screen* current,int h){
-   printf("update.c    on_click_ng\n");
     switch (h)
     {
     case 5:
@@ -162,7 +155,6 @@ void on_click_save(screen* current,int h){
 }
 
 void on_click_over(screen* current,int h){
-   printf("update.c    on_click_ng\n");
     switch (h)
     {
     case 0:
@@ -181,7 +173,6 @@ void on_click_over(screen* current,int h){
 }
 
 void on_click_pause(screen* current,int h){
-   printf("update.c    on_click_ng\n");
     switch (h)
     {
     case 0:
@@ -211,14 +202,12 @@ void update_frame(screen* current){
                 gen_screen(current,GAME);
             }
             if(current->id != OVER && current->id != PSEUDO){
-                print("APOLA");
                 gen_screen(current,current->last_screen_id);
             }
     }
 }
 
 void on_click(screen* current,int h){
-   printf("update.c    on_click\n");
     switch (current->id)
     {
     case MENU:
