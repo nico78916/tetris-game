@@ -31,6 +31,10 @@ void load_save(screen *current);
 */
 void write_save(game *g);
 
+/*permet de lire le fichier de score*/
+
 void get_scoreboard(player_info scoreboard[10]);
+
+/*permet d'écrire un score avec un nom*/
 
 void set_score(player_info infos);
