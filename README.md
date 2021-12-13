@@ -1,100 +1,42 @@
-Ce projet est un simple jeu de Tetris like ...
+Généralités : 
+Projet réalisé par Kevin Lieske et Nicolas Reymond Forkani.
+C'est un Tetris mais modifié pour le rendre plus difficile
 
-PATCH NOTE :
-+ ajout de update.h (les fonctions étaient anciennement dans main.c)
-+ ajout de save.h
-+ ajout de game.h pour les besoins de save.h
-Étant donné le nombre grandissant de modules, on passe sur un makefile basique
+Les contrôles (Durant le jeu):
+Flèche Haut : Rotation (Uniquement en facile et normale)
+Flèche Droite : Décaler la pièce sur la droite
+Flèche Gauche : Décaler la pièce sur la gauche
+Flèche Bas : Accélérer la descente de la pièce
+ALT + F4 : Quitter
+ECHAP : PAUSE (In game)
 
+Les touches de contrôle dans la saisie du pseudo :
+	- Flèches directionnels : Se déplacer dans les touche du clavier virtuelle.
+	- La souris : Prioritaire sur les précédentes touches.
+	- Entrer / Clique gauche de la souris : Valider le caractère à ajouter.
 
-Composition :
-main.c -> programme principale
-module graphique contenant la definition des écrans
-module de sauvegarde permettant de charger et d'enregistrer.
-module du jeu permettant d'interagir avec l'utilisateur
+Les boutons du panneau de saisie virtuelle :
+	- Valider : Valide le pseudo entrer (Attention le pseudo doit faire au minimum 4 caractère et doit commencer par une lettre).
+	- Corriger : Effacer le dernier caractère entré.
+	- Effacer : Efface le pseudo en entier.
 
+Dans les menu :
+	Les boutons sont cliquables avec la souris.
+	- ECHAP : Retour au menu précédent
+	- ALT + F4 : Quitter le jeu
 
-api : fonction print et indexOf
-
-const : résolution
-
-game : fonction d'utilisation des bloques
-
-	initialisation						ok
-	génération de bloques					ok
-	gauche droite						ok
-	rotation horaire et anti-horaire			ok
-	déscente déscente_accélérée				à faire
-	générérer bloques sur l'écran				à faire
-	fonction pour gérer la descente				à faire
-	actualiser image pendant la descente			à faire
-	fonction pour vérif si le bloque a atteind le bas	à faire
-	fonction de vérif si une ligne est complète		à faire
-	fonction pour suppr une ligne si ligne complète		à faire
-	fonction pour vérif si le coup est réalisable		à faire
-	fonction pour vérifier si le jeu est finit		à faire
-	fonction score						à faire
-	fonction pause						à faire
-	fonciton pour terminer le jeu si il est finit		à faire
-    
-graphics : fenêtres avec MLV
-
-	fenêtre menu
-		fenêtre nouvelle partie
-			fenêtre 1 joueur
-			fenêtre 2 joueurs
-			fenêtre 3 joueurs
-			fenêtre 4 joueurs
-			retour menu
-		continuer (charge la dernière save)
-		charger
-			gestion de 5 saves et appel une save
-			donner un nom aux saves voir le nom du profil?
-			retour menu
-		fenêtre options
-			résolution
-			mode
-			couleur
-			son
-			retour
-		boutton quitter
-
-save : fonction pour sauvegarde
-
-		créer une sauvegarde				à faire
-		vérifier les slots disponibles			à faire
-		choix du slot					à faire
-		écriture dans le fichier de sauvegarde		ok
-		vérif si fichier de sauvegarde vide ou utilisé	à faire
-		écraser fichier de sauvegarde déjà utilisé	à faire
-		récupérer une sauvegarde			ok
-		lancer une sauvegarde				à faire
-
-string : manipulation de chaîne
-
-update : fonction click
-
-		fonction de de prise en compte du clic
-		fonction de vérif validité clic
-		
-		menu
-			appel nouvelle partie
-				appel fenêtre 1 joueur
-				appel fenêtre 2 joueurs
-				appel fenêtre 3 joueurs
-				appel fenêtre 4 joueurs
-				retour
-			appel continuer (charge la save)
-			appel charger
-				appel save 1
-				appel save 2
-				appel save 3
-				appel save 4
-				appel save 5
-				retour
-			appel options
-				pas de nouvelles fenêtre
-				retour
-			quitter
-
-Key binding
+Les fonctionnalités :
+Les Difficultés : 
+	- Facile : Présence de petites pièces de forme simple que l'on peut tourner.
+	- Normale : Les pièces sont de formes plus ou moins étrange et plus grandes, comme en facile on peut les tourner.
+	- Difficile : Les pièces sont pareille qu'en normale mais on ne peut plus les tourner.
+Les sauvegarde : 
+	- Sauvegarde automatique (Pour la charger il suffit de cliquer sur continuer).
+	- 6 slots de sauvegarde manuelle accessible depuis PAUSE>SAUVEGARDE lorsque l'on joue
+	- Pour des raison de jouabilité la dernière pièces retombera depuis le début afin de ne pas perdre le file
+Le tableau des scores :
+	Les 10 meilleurs scores seront sauvegarder
+Les options de lancement:
+	Pour une résolution personnalisé : -size width height
+	Pour démarrer en mode plein écran : -f
+	Les deux sont cumulable mais non recommandé
