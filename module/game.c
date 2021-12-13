@@ -8,7 +8,6 @@
 void copy_blocks(int src[FIGURE_SIZE][FIGURE_SIZE], int dest[FIGURE_SIZE][FIGURE_SIZE])
 {
   int i, j;
-  printf("game.c    copy_blocks\n");
   for (i = 0; i < FIGURE_SIZE; i++)
   {
     for (j = 0; j < FIGURE_SIZE; j++)
@@ -21,7 +20,6 @@ void copy_blocks(int src[FIGURE_SIZE][FIGURE_SIZE], int dest[FIGURE_SIZE][FIGURE
 void print_blocks(int mat[FIGURE_SIZE][FIGURE_SIZE])
 {
   int i, j;
-  printf("game.c    print_blocks\n");
   print("------------------------------");
   for (i = 0; i < FIGURE_SIZE; i++)
   {
@@ -56,7 +54,6 @@ void set_colors(int blocks[FIGURE_SIZE][FIGURE_SIZE])
 int get_empty_figure(game g)
 {
   int i, j, k;
-  printf("game.c    get_empty_figure\n");
   for (k = 0; k < MAX_FIGURES; k++)
   {
     for (i = 0; i < FIGURE_SIZE; i++)
@@ -77,7 +74,6 @@ void transp(int dest[FIGURE_SIZE][FIGURE_SIZE])
 {
   int src[FIGURE_SIZE][FIGURE_SIZE];
   int i, j;
-  printf("game.c    transp\n");
   copy_blocks(dest, src);
   for (i = 0; i < FIGURE_SIZE; i++)
   {
@@ -92,7 +88,6 @@ void reverse_row(int dest[FIGURE_SIZE][FIGURE_SIZE])
 {
   int i, j;
   int src[FIGURE_SIZE][FIGURE_SIZE];
-  printf("game.c    reverse_row\n");
   copy_blocks(dest, src);
   for (i = 0; i < FIGURE_SIZE; i++)
   {
@@ -107,7 +102,6 @@ void reverse_col(int dest[FIGURE_SIZE][FIGURE_SIZE])
 {
   int i, j;
   int src[FIGURE_SIZE][FIGURE_SIZE];
-  printf("game.c    reverse_col\n");
   copy_blocks(dest, src);
   for (i = 0; i < FIGURE_SIZE; i++)
   {
@@ -123,7 +117,6 @@ void reverse_col(int dest[FIGURE_SIZE][FIGURE_SIZE])
  */
 void rot_90(int dest[FIGURE_SIZE][FIGURE_SIZE])
 {
-  printf("game.c    rot_90\n");
   transp(dest);
   reverse_row(dest);
 }
@@ -133,7 +126,6 @@ void rot_90(int dest[FIGURE_SIZE][FIGURE_SIZE])
  */
 void rot_m90(int dest[FIGURE_SIZE][FIGURE_SIZE])
 {
-  printf("game.c    rot_m90\n");
   transp(dest);
   reverse_col(dest);
 }
@@ -142,7 +134,6 @@ void rot_m90(int dest[FIGURE_SIZE][FIGURE_SIZE])
 void gen_blocks(game *g,int index)
 {
   int i, j, rnd, x, y, lastrnd = -1;
-  printf("game.c    gen_blocks\n");
   if(g->players[0].score > 1000){
     rnd = rand() % 6 + 2;
   }else{
@@ -223,7 +214,6 @@ void gen_blocks(game *g,int index)
 void next_turn(screen *current)
 {
   int i, j;
-  printf("game.c    next_turn\n");
   for (i = 1; i < MAX_FIGURES; i++)
   {
     current->jeu.figures[i - 1] = current->jeu.figures[i];
@@ -241,7 +231,6 @@ void next_turn(screen *current)
 game init_game(game g)
 {
   int i, j;
-  printf("game.c    init_game\n");
   g.case_size = 0;
   g.slot = 0;
   for (i = 0; i < MAX_FIGURES; i++)
@@ -262,7 +251,6 @@ game init_game(game g)
 int est_fini(game g)
 {
   int i;
-  printf("game.c    est_fini\n");
   for (i = 0; i < NB_COLS; i++)
   {
     if (g.grid[0][i] != 0)
@@ -277,7 +265,6 @@ int est_fini(game g)
 int verif_sienbas(game g)
 {
   int i, j;
-  printf("game.c    verif_sienbas\n");
   for (j = 0; j < NB_COLS; j++)
   {
     if (g.grid[NB_LINES - 1][j] > (MAX_COLOR) / 2)
@@ -306,7 +293,6 @@ int verif_sienbas(game g)
 game verif_lignecomplete(game g)
 {
   int i, j = 0, k, l, verif[NB_LINES] = {0}, counter = 0;
-  printf("game.c    verif_lignecomplete\n");
   for (i = 0; i < NB_LINES; i++)
   {
     if (g.grid[i][j] > 0 && g.grid[i][j] <= (MAX_COLOR) / 2)
@@ -348,7 +334,6 @@ game verif_lignecomplete(game g)
 game descente(game g)
 {
   int i, j;
-  printf("game.c    descente\n");
   for (i = NB_LINES - 1; i >= 0; i--)
   {
     for (j = 0; j < NB_COLS; j++)
@@ -367,7 +352,6 @@ game descente(game g)
 game mouv_gauche(game g, int compteur, int *y)
 {
   int i, j;
-  printf("game.c    mouv_gauche\n");
   for (i = 0; i < NB_LINES; i++)
   {
     if (g.grid[i][0] > (MAX_COLOR - 1) / 2)
@@ -408,7 +392,6 @@ game mouv_gauche(game g, int compteur, int *y)
 game mouv_droite(game g, int compteur, int *y)
 {
   int i, j;
-  printf("game.c    mouv_droite\n");
   for (i = 0; i < NB_LINES; i++)
   {
     if (g.grid[i][NB_COLS - 1] > (MAX_COLOR - 1) / 2)
@@ -492,7 +475,6 @@ void init_code_couleur(code_couleur c[MAX_COLOR])
 void gen_ligne(int grid[NB_LINES][NB_COLS], int bloque[FIGURE_SIZE][FIGURE_SIZE], int compteur, int y)
 {
   int j;
-  printf("game.c    gen_ligne\n");
   if (compteur > 3)
   {
     return;
@@ -511,7 +493,6 @@ void gen_ligne(int grid[NB_LINES][NB_COLS], int bloque[FIGURE_SIZE][FIGURE_SIZE]
 void montee_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
 {
   int i, j;
-  printf("game.c    montee_figure\n");
   for (i = 0; i < FIGURE_SIZE; i++)
   {
     if (g[0][i] > 0)
@@ -536,7 +517,6 @@ void montee_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
 void descente_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
 {
   int i, j;
-  printf("game.c    descente_figure\n");
   for (i = 0; i < FIGURE_SIZE; i++)
   {
     if (g[FIGURE_SIZE - 1][i] > 0)
@@ -561,7 +541,6 @@ void descente_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
 void mouv_gauche_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
 {
   int i, j;
-  printf("game.c    mouv_gauche_figure\n");
   for (i = 0; i < FIGURE_SIZE; i++)
   {
     if (g[i][0] > 0)
@@ -586,7 +565,6 @@ void mouv_gauche_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
 void mouv_droite_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
 {
   int i, j;
-  printf("game.c    mouv_droite_figure\n");
   for (i = 0; i < FIGURE_SIZE; i++)
   {
     if (g[i][FIGURE_SIZE - 1] > 0)
@@ -612,7 +590,6 @@ game mouv_rot(game g, int *x, int *y)
 {
   int i, j, x1, y1, tabx[FIGURE_SIZE] = {0}, taby[FIGURE_SIZE] = {0}, rotx[FIGURE_SIZE] = {0}, roty[FIGURE_SIZE] = {0}, tx = 0, ty = 0, rx = 0, ry = 0, cx = 0, cy = 0, crx = 0, cry = 0, decalage1 = 0, decalage2 = 0, y2, y3, count = 0;
   int figure[FIGURE_SIZE][FIGURE_SIZE], figure2[FIGURE_SIZE][FIGURE_SIZE];
-  printf("game.c    mouv_rot\n");
   y2 = *y;
   y3 = *y;
   x1 = *x - 3;
@@ -621,7 +598,6 @@ game mouv_rot(game g, int *x, int *y)
   {
     return g;
   }
-  printf("test ok\n");
   while (y2 < 0)
   {
     y2 += 1;
@@ -668,8 +644,6 @@ game mouv_rot(game g, int *x, int *y)
       }
     }
   }
-  print_blocks(figure);
-  printf("figure ok\n");
   for (i = 0; i < FIGURE_SIZE; i++)
   {
     for (j = 0; j < FIGURE_SIZE; j++)
@@ -693,8 +667,6 @@ game mouv_rot(game g, int *x, int *y)
       }
     }
   }
-  print_blocks(figure);
-  printf("tab ok\n");
   for (i = 0; i < FIGURE_SIZE; i++)
   {
     for (j = 0; j < FIGURE_SIZE; j++)
@@ -749,7 +721,6 @@ game mouv_rot(game g, int *x, int *y)
     }
     count += 1;
   }
-  print_blocks(figure);
   y2 = *y;
   y3 = *y;
   decalage1 = 0;
@@ -758,7 +729,6 @@ game mouv_rot(game g, int *x, int *y)
   {
     y2 += 1;
     decalage1 += 1;
-    printf("%d\n", decalage1);
   }
   if (decalage1 != 0)
   {
@@ -781,7 +751,6 @@ game mouv_rot(game g, int *x, int *y)
   print_blocks(figure);
   if (decalage2 != 0)
   {
-    printf("decalage ok\n");
     for (i = 0; i < FIGURE_SIZE; i++)
     {
       for (j = FIGURE_SIZE - decalage2; j < FIGURE_SIZE; j++)
