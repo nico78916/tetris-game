@@ -148,6 +148,7 @@ void on_click_save(screen* current,int h){
         gen_screen(current,PAUSE);
         break;
     default:
+        if(h == -1) break;
         current->jeu.slot = h+1;
         write_save(&current->jeu);
         current->jeu.slot = 0;

@@ -48,7 +48,6 @@ void set_colors(int blocks[FIGURE_SIZE][FIGURE_SIZE])
       }
     }
   }
-  print_blocks(blocks);
 }
 
 int get_empty_figure(game g)
@@ -228,7 +227,6 @@ game init_game(game g)
   for (i = 0; i < MAX_FIGURES; i++)
   {
     gen_blocks(&g,i);
-    print_blocks(g.figures[i].blocks);
   }
   for (i = 0; i < NB_LINES; i++)
     for (j = 0; j < NB_COLS; j++)
@@ -462,14 +460,10 @@ void gen_ligne(int grid[NB_LINES][NB_COLS], int bloque[FIGURE_SIZE][FIGURE_SIZE]
   {
     return;
   }
-  print_blocks(bloque);
-  printf("%d\n", compteur);
   for (j = 0; j < FIGURE_SIZE; j++)
   {
     grid[0][j + y] = bloque[FIGURE_SIZE - 1 - compteur][j];
-    printf("%d ", grid[0][j + y]);
   }
-  printf("\n");
 }
 
 void montee_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
@@ -726,7 +720,6 @@ game mouv_rot(game g, int *x, int *y)
     y3 -= 1;
     decalage2 += 1;
   }
-  print_blocks(figure);
   if (decalage2 != 0)
   {
     for (i = 0; i < FIGURE_SIZE; i++)

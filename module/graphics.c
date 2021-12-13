@@ -371,7 +371,7 @@ screen gen_over(screen current)
     MLV_draw_text_with_font(current.width / 2 - f, b * 2 + e * 2 + g * (i + 1), scoreboard[i].name, default_font, col);
     sprintf(scored, "%d", scoreboard[i].score);
     MLV_get_size_of_text_with_font(scored, &f, &g, default_font);
-    MLV_draw_text_with_font(current.width / 2 + f, b * 2 + e * 2 + g * (i + 1), scored, default_font, col);
+    MLV_draw_text_with_font(current.width / 2 + 10, b * 2 + e * 2 + g * (i + 1), scored, default_font, col);
   }
   c.height = current.height / 16;
   c.width = current.width / 2;

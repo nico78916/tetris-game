@@ -58,19 +58,15 @@ game get_figures(FILE* save,game g){
     while(fgetc(save) != 'b');
     for(i=0;i<5;i++){
         fgetc(save);/* on supprime le saut de ligne */
-        print("----");
         for(k=0;k<4;k++){
             fgets(s,10,save);
             j = 0;
             while(s[j] != '\n'){
-               printf("%d",s[j]- '0');
                 g.figures[i].blocks[k][j] = s[j]- '0';
                 g.figures[i].blocks[k][j] = g.figures[i].blocks[k][j] > 0 ? g.figures[i].blocks[k][j] + 10 : 0;
                 j++;
             }
-            print(" ");
         }
-        print("\n----");
     }
     return g;
 }
@@ -100,9 +96,7 @@ void load_save(screen *current){
             k++;
         }
     }
-    print_mat(current->jeu.grid,NB_LINES,NB_COLS);
     for(i=0;i<MAX_FIGURES;i++){
-        printf("fig[%d] = %s\n",i,fig[i]);
         l = 0;
         for(j=0;j<FIGURE_SIZE;j++){
             for(k=0;k<FIGURE_SIZE;k++){
@@ -131,7 +125,6 @@ void write_save(game *g){
     char path[13];
     char str[STR_MAT_GRID] = "";
     char fig[STR_FIGS] = "";
-    print("SAVING");
     delete_useless(g->grid);
     for(i=0;i<MAX_FIGURES;i++){
         for(j=0;j<FIGURE_SIZE;j++)
@@ -171,8 +164,6 @@ void write_save(game *g){
     }
     k--;
     fig[k] = '\0';
-    printf("game :\n %s\n",str);
-    printf("figures : \n %s\n",fig);
     fprintf(save,"score:{%d};game:{%s};figures:{%s}", g->players[0].score,str,fig);
     fclose(save);
 }
@@ -197,7 +188,6 @@ void get_scoreboard(player_info scoreboard[10]){
         printf("[Erreur|Fatale] Scoreboard corrompu %d\n",i);
         exit(-1);
     }
-    print("Fin");
     fclose(save);
 }
 
@@ -205,7 +195,6 @@ void set_score(player_info infos){
     player_info scoreboard[10];
     int i,index = 10;
     FILE * saved;
-    print("STARTING REGISTERING NEW SCORE");
     get_scoreboard(scoreboard);
     saved = fopen( "./save/scoreboard.txt", "w" );
     if ( saved == NULL ) {
@@ -214,7 +203,6 @@ void set_score(player_info infos){
     }
     for(i=9;i>=0;i--){
         if(scoreboard[i].score < infos.score){
-            printf("name : %s\n",scoreboard[i].name);
             index--;
         }
     }
@@ -225,12 +213,10 @@ void set_score(player_info infos){
         scoreboard[i].score = scoreboard[i-1].score;
         strcpy(scoreboard[i].name,scoreboard[i-1].name);
     }
-    printf("%d\n",index);
     scoreboard[index].score = infos.score;
     strcpy(scoreboard[i].name,infos.name);
     
     for(i=0;i<10;i++){
         fprintf(saved,"%s\n%d\n",scoreboard[i].name,scoreboard[i].score);
     }
-    print("END OF NEW SCORE");
 }
