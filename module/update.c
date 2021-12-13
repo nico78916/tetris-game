@@ -6,6 +6,7 @@
 #include "../header/save.h"
 #include "../header/game.h"
 
+/*fonction pour quitter le jeu*/
 void quit_game(screen* current){
     print("Quitting the game");
     MLV_free_font(default_font);
@@ -21,6 +22,7 @@ void quit_game(screen* current){
     exit(0);
 }
 
+/*fonction pour generer l'ecran*/
 void gen_screen(screen *current,screen_id id){
     current->last_screen_id = current->id;
     current->id = id;
@@ -65,10 +67,12 @@ void gen_screen(screen *current,screen_id id){
 
 }
 
+/*retour au menu*/
 void return_menu(screen* current){
     gen_screen(current,MENU);
 }
 
+/*clique dans le menu*/
 void on_click_menu(screen* current,int h){
    printf("update.c    on_click_menu\n");
     switch (h)
@@ -101,6 +105,7 @@ void on_click_menu(screen* current,int h){
     }
 }
 
+/*clique dans le menu option*/
 void on_click_opts(screen* current,int h){
    printf("update.c    on_click_opts\n");
     switch (h)
@@ -148,6 +153,7 @@ void on_click_ng(screen* current,int h){
     }
 }
 
+/*clique dans le menu des chargements*/
 void on_click_load(screen* current,int h){
    printf("update.c    on_click_ng\n");
     switch (h)
@@ -201,6 +207,7 @@ void on_click_over(screen* current,int h){
     }
 }
 
+/*clique dans le menu pause*/
 void on_click_pause(screen* current,int h){
    printf("update.c    on_click_ng\n");
     switch (h)
@@ -267,7 +274,8 @@ void on_click(screen* current,int h){
     }
 }
 
-void update_seconde(screen* current){
+/*initialise le generateur d'aleatoire*/
+void update_seconde(){
     srand(time(NULL));
     return;
 }

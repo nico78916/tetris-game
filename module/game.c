@@ -138,6 +138,7 @@ void rot_m90(int dest[FIGURE_SIZE][FIGURE_SIZE])
   reverse_col(dest);
 }
 
+/*generateur de bloques*/
 void gen_blocks(game *g,int index)
 {
   int i, j, rnd, x, y, lastrnd = -1;
@@ -236,6 +237,7 @@ void next_turn(screen *current)
     }
 }
 
+/*permet d'initialiser le jeu*/
 game init_game(game g)
 {
   int i, j;
@@ -255,6 +257,8 @@ game init_game(game g)
   return g;
 }
 
+/*verifie si le jeu est fini: bloque sur la ligne du haut*/
+/*Si return 1 alors il y a un bloque sur la premiere ligne, le jeu est fini*/
 int est_fini(game g)
 {
   int i;
@@ -263,12 +267,13 @@ int est_fini(game g)
   {
     if (g.grid[0][i] != 0)
     {
-      return 1; /*Si return 1 alors il y a un bloque sur la première ligne, le jeu est fini*/
+      return 1;
     }
   }
   return 0;
 }
 
+/*verifie si un bloc est arrive en bas de la grille ou si il est arrive sur un bloc fixe*/
 int verif_sienbas(game g)
 {
   int i, j;
@@ -293,10 +298,15 @@ int verif_sienbas(game g)
   return 0;
 }
 
+/*verifie si une des lignes est complete et l'efface le cas echeant en deplacant d'une case vers le bas tous les bloques au dessus de la ligne complete*/
+/*pour chaque ligne, verifie si la premiere valeur de la ligne est 1*/
+/*si elle vaut 1 alors ca check toute les valeurs de la ligne*/
+/*j fait le count et compte le nombre d'iteration de 1*/
+/*si j est egal au NB_COLS, alors toute la ligne vaut 1*/
 game verif_lignecomplete(game g)
-{                                                                                                                         /*pour chaque ligne, vérifie si la première valeur de la ligne est 1*/
-  int i, j = 0, k, l, verif[NB_LINES] = {0}, counter = 0; /*si elle vaut 1 alors ça check toute les valeurs de la ligne*/ /*j fait le count et compte le nombre d'itération de 1*/
-  printf("game.c    verif_lignecomplete\n");                                                                              /*si j est égal au NB_COLS, alors toute la ligne vaut 1*/
+{
+  int i, j = 0, k, l, verif[NB_LINES] = {0}, counter = 0;
+  printf("game.c    verif_lignecomplete\n");
   for (i = 0; i < NB_LINES; i++)
   {
     if (g.grid[i][j] > 0 && g.grid[i][j] <= (MAX_COLOR) / 2)
@@ -334,20 +344,7 @@ game verif_lignecomplete(game g)
   return g;
 }
 
-int verif_jeufini(game g)
-{
-  int i;
-  printf("game.c    verif_jeufini\n");
-  for (i = 0; i < NB_COLS; i++)
-  {
-    if (g.grid[3][i] > 0)
-    {
-      return 1;
-    }
-  }
-  return 0;
-}
-
+/*fait descendre le bloque dans la grille*/
 game descente(game g)
 {
   int i, j;
@@ -366,6 +363,7 @@ game descente(game g)
   return g;
 }
 
+/*verifie si le mouvement est permis et deplace a gauche le bloque dans la grille le cas echeant*/
 game mouv_gauche(game g, int compteur, int *y)
 {
   int i, j;
@@ -406,6 +404,7 @@ game mouv_gauche(game g, int compteur, int *y)
   return g;
 }
 
+/*verifie si le mouvement est permis et deplace a droite le bloque dans la grille le cas echeant*/
 game mouv_droite(game g, int compteur, int *y)
 {
   int i, j;
@@ -446,6 +445,7 @@ game mouv_droite(game g, int compteur, int *y)
   return g;
 }
 
+/*fixe le bloque dans la grille si la fonction verif_sienbas indique que le bloque est arrive en bas*/
 void fixer_bloque(screen *current)
 {
   int i, j;
@@ -463,6 +463,7 @@ void fixer_bloque(screen *current)
   update_figures(current);
 }
 
+/*initialise les couleurs des bloques*/
 void init_code_couleur(code_couleur c[MAX_COLOR])
 {
   c[0].color = MLV_COLOR_BLACK;
@@ -487,6 +488,7 @@ void init_code_couleur(code_couleur c[MAX_COLOR])
   c[19].color = MLV_COLOR_DARK_BLUE;
 }
 
+/*genere la premiere ligne au fur et a mesure de la descente du bloque lorsqu'il est initialise*/
 void gen_ligne(int grid[NB_LINES][NB_COLS], int bloque[FIGURE_SIZE][FIGURE_SIZE], int compteur, int y)
 {
   int j;
@@ -505,6 +507,7 @@ void gen_ligne(int grid[NB_LINES][NB_COLS], int bloque[FIGURE_SIZE][FIGURE_SIZE]
   printf("\n");
 }
 
+/*permet de faire monter la figure dans la fonction de rotation*/
 void montee_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
 {
   int i, j;
@@ -529,6 +532,7 @@ void montee_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
   }
 }
 
+/*permet de faire descendre la figure dans la fonction de rotation*/
 void descente_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
 {
   int i, j;
@@ -552,6 +556,8 @@ void descente_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
     }
   }
 }
+
+/*permet de deplacer la figure a gauche dans la fonction de rotation*/
 void mouv_gauche_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
 {
   int i, j;
@@ -576,6 +582,7 @@ void mouv_gauche_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
   }
 }
 
+/*permet de deplacer la figure a droite dans la fonction de rotation*/
 void mouv_droite_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
 {
   int i, j;
@@ -600,9 +607,10 @@ void mouv_droite_figure(int g[FIGURE_SIZE][FIGURE_SIZE])
   }
 }
 
+/*fonction de rotation permettant de verifier que la rotation est possible et de l'effectuer le cas echeant*/
 game mouv_rot(game g, int *x, int *y)
 {
-  int i, j, x1, y1, tabx[FIGURE_SIZE] = {0}, taby[FIGURE_SIZE] = {0}, rotx[FIGURE_SIZE] = {0}, roty[FIGURE_SIZE] = {0}, tx = 0, ty = 0, rx = 0, ry = 0, cx = 0, cy = 0, crx = 0, cry = 0, decalage1 = 0, decalage2 = 0, y2, y3, count = 0 /*, jeux[FIGURE_SIZE] = {0}, jeuy[FIGURE_SIZE] = {0}*/;
+  int i, j, x1, y1, tabx[FIGURE_SIZE] = {0}, taby[FIGURE_SIZE] = {0}, rotx[FIGURE_SIZE] = {0}, roty[FIGURE_SIZE] = {0}, tx = 0, ty = 0, rx = 0, ry = 0, cx = 0, cy = 0, crx = 0, cry = 0, decalage1 = 0, decalage2 = 0, y2, y3, count = 0;
   int figure[FIGURE_SIZE][FIGURE_SIZE], figure2[FIGURE_SIZE][FIGURE_SIZE];
   printf("game.c    mouv_rot\n");
   y2 = *y;
@@ -613,34 +621,23 @@ game mouv_rot(game g, int *x, int *y)
   {
     return g;
   }
-  /*if(y1 <= 0){
-    return g;
-  }
-  if(y1 > NB_COLS - 4){
-    return g;
-  }*/
   printf("test ok\n");
   while (y2 < 0)
   {
     y2 += 1;
     decalage1 += 1;
-    printf("%d\n", decalage1);
   }
   while (y3 > NB_COLS - FIGURE_SIZE)
   {
     y3 -= 1;
     decalage2 += 1;
-    printf("%d\n", decalage2);
   }
-  printf("%d, %d, %d\n", *y, decalage1, decalage2);
   for (i = 0; i < FIGURE_SIZE; i++)
   {
     for (j = 0; j < FIGURE_SIZE; j++)
     {
       figure[i][j] = g.grid[i + x1][j + y1];
       figure2[i][j] = g.grid[i + x1][j + y1];
-      /*jeux[i] = i + x1;
-  jeuy[j] = j + y1;*/
       if (figure[i][j] > 0 && figure[i][j] <= (MAX_COLOR - MAX_COLOR % 2) / 2)
       {
         figure[i][j] = 0;
@@ -730,7 +727,6 @@ game mouv_rot(game g, int *x, int *y)
   ry = ry / cry;
   while ((tx != rx && count < 20) || (ty != ry && count < 20))
   {
-    printf("gg\n");
     if (tx < rx && rotx[0] == 0)
     {
       rx -= 1;
@@ -754,12 +750,10 @@ game mouv_rot(game g, int *x, int *y)
     count += 1;
   }
   print_blocks(figure);
-  printf("rotation ok\n");
   y2 = *y;
   y3 = *y;
   decalage1 = 0;
   decalage2 = 0;
-  printf("y2=%d, y3=%d\n", y2, y3);
   while (y2 < 0)
   {
     y2 += 1;
@@ -783,7 +777,6 @@ game mouv_rot(game g, int *x, int *y)
   {
     y3 -= 1;
     decalage2 += 1;
-    printf("%d\n", decalage2);
   }
   print_blocks(figure);
   if (decalage2 != 0)
@@ -800,7 +793,6 @@ game mouv_rot(game g, int *x, int *y)
       }
     }
   }
-  printf("y2=%d, y3=%d\n", y2, y3);
   for (i = 0; i < FIGURE_SIZE; i++)
   {
     for (j = 0; j < FIGURE_SIZE; j++)
@@ -811,25 +803,15 @@ game mouv_rot(game g, int *x, int *y)
       }
     }
   }
-  /*decalage1 = *y;
-  while(decalage1<0){
-    for(i=0;i<FIGURE_SIZE;i++){
-      if(figure[i][j]<0){
-
-      }
-  }
-  }*/
   for (i = 0; i < FIGURE_SIZE; i++)
   {
     for (j = 0; j < FIGURE_SIZE; j++)
     {
-      /*if(jeux[i]>=0 && jeux[i]<NB_LINES && jeuy[j]>0 && jeuy[j]<NB_COLS){*/
       g.grid[i + x1][j + y1] = figure[i][j];
       if (figure2[i][j] > 0 && figure2[i][j] <= (MAX_COLOR - MAX_COLOR % 2) / 2)
       {
         g.grid[i + x1][j + y1] = figure2[i][j];
       }
-      /*}*/
     }
   }
   return g;

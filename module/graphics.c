@@ -77,6 +77,7 @@ void get_screen_resolution_text(screen current, char *str)
   strcat(str, sth);
 }
 
+/*generateur du menu*/
 screen gen_menu(screen current)
 {
   int i, lastY, bw, bh, tw, th, width, height;
@@ -110,6 +111,7 @@ screen gen_menu(screen current)
   return current;
 }
 
+/*generateur du menu option*/
 screen gen_option(screen current)
 {
   int i, lastY, bw, bh, tw, th, width, height;
@@ -133,11 +135,9 @@ screen gen_option(screen current)
   printf("w = %d, h=%d, btn_c = %d, id = %d\n", current.width, current.height, current.btncount, current.id);
   width = current.width;
   height = current.height;
-  /* POURQUOI ???? POURQUOI NOUS FAIRE ÇA ? */
   get_screen_resolution_text(current, chaine);
   labels[0] = chaine;
   printf("%s\n", chaine);
-  /* Avec un malloc() ça aurait pris 2 lignes : sprintf(chaine,"%dx%d",width,height); ... free(chaine); */
   bw = width / 2;
   bh = height / 10;
   lastY = height / current.btncount - bh / 2;
@@ -146,7 +146,6 @@ screen gen_option(screen current)
   for (i = 0; i < current.btncount; i++)
   {
     button b;
-    /*char a[MAX_STR];*/
     MLV_draw_text_box_with_font(width / 2 - bw / 2, lastY, bw, bh, labels[i], default_font, 20, MLV_COLOR_WHITE, MLV_COLOR_BLACK, MLV_COLOR_GREY, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
     b.height = bh;
     b.width = bw;
@@ -558,6 +557,7 @@ void update_figures(screen *current)
     printf("(%d, %d)\n",current->jeu.figures[k].x,current->jeu.figures[k].y);
 }
 
+/*generateur du menu pause*/
 screen gen_pause(screen current)
 {
   int i,width, height, bw, bh,start;
@@ -585,6 +585,7 @@ screen gen_pause(screen current)
   return current;
 }
 
+/*generateur du jeu*/
 screen gen_game(screen current)
 {
   int height, i, j, finw = 0, count = 0, couleur, compteur, mouv_x, mouv_y,*pmouv_x,*pmouv_y, cooldown = 2, sec_counter = 0;
@@ -624,10 +625,10 @@ screen gen_game(screen current)
       cooldown --;
       cooldown = cooldown <= 0 ? 0 : cooldown;
       if (count >= 4)
-      {
+      {/*descente*/
         if (verif_sienbas(current.jeu) == 0)
         {
-          current.jeu = descente(current.jeu); /*si atente d'une seconde, le bloque tombe, modification de la grille*/
+          current.jeu = descente(current.jeu);
           count = 0;
           mouv_x += 1;
           gen_ligne(current.jeu.grid, current.jeu.figures[0].blocks, compteur, mouv_y);
@@ -689,7 +690,6 @@ screen gen_game(screen current)
         return current;
       }
       finw = verif_sienbas(current.jeu);
-      /*MLV_clear_window(MLV_COLOR_BLACK);*/
       draw_grid(current.jeu);
       /* dessine les blocks une fois dans la matrice */
       for (i = 0; i < NB_COLS; i++)
@@ -760,14 +760,12 @@ screen gen_newgame(screen current)
   {
     button b;
     printf("%d\n", i);
-    /*char a[MAX_STR];*/
     MLV_draw_text_box_with_font(width / 2 - bw / 2, lastY, bw, bh, labels[i], default_font, 20, MLV_COLOR_WHITE, MLV_COLOR_BLACK, MLV_COLOR_GREY, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
     b.height = bh;
     b.width = bw;
     b.x = width / 2 - bw / 2;
     b.y = lastY;
     b.label = labels[i];
-    /*strcpy(b.label,labels[i]);*/
     current.buttons[i] = b;
     print("Pass");
     lastY += bh + height / 16;
@@ -794,14 +792,12 @@ screen gen_load(screen current)
   for (i = 0; i < current.btncount; i++)
   {
     button b;
-    /*char a[MAX_STR];*/
     MLV_draw_text_box_with_font(width / 2 - bw / 2, lastY, bw, bh, labels[i], default_font, 20, MLV_COLOR_WHITE, MLV_COLOR_BLACK, MLV_COLOR_GREY, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
     b.height = bh;
     b.width = bw;
     b.x = width / 2 - bw / 2;
     b.y = lastY;
     b.label = labels[i];
-    /*strcpy(b.label,labels[i]);*/
     current.buttons[i] = b;
     lastY += bh + height / 16;
   }
@@ -826,14 +822,12 @@ screen gen_save(screen current)
   for (i = 0; i < current.btncount; i++)
   {
     button b;
-    /*char a[MAX_STR];*/
     MLV_draw_text_box_with_font(width / 2 - bw / 2, lastY, bw, bh, labels[i], default_font, 20, MLV_COLOR_WHITE, MLV_COLOR_BLACK, MLV_COLOR_GREY, MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
     b.height = bh;
     b.width = bw;
     b.x = width / 2 - bw / 2;
     b.y = lastY;
     b.label = labels[i];
-    /*strcpy(b.label,labels[i]);*/
     current.buttons[i] = b;
     lastY += bh + height / 16;
   }
