@@ -26,9 +26,11 @@ void gen_screen(screen *current,screen_id id){
     switch (id)
     {
     case MENU:
-        MLV_stop_music();
-        current->cursong = MLV_load_music("ressources/title.wav");
-        MLV_play_music(current->cursong,1.0,-1);
+        if(current->jeu.sound == 1){
+            MLV_stop_music();
+            current->cursong = MLV_load_music("ressources/title.wav");
+            MLV_play_music(current->cursong,1.0,1);
+        }
         *current = gen_menu(*current);
         break;
     case OPTIONS:
@@ -129,6 +131,7 @@ void on_click_load(screen* current,int h){
         gen_screen(current,MENU);
         break;
     default:
+        if(h == -1) break;
         current->jeu.slot = h+1;
         load_save(current);
         current->jeu.slot = 0;

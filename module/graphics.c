@@ -635,8 +635,11 @@ screen gen_game(screen current)
     /*le bloque est descendu en bas, appel fonction pour vérifier si ligne complète et donc effacer*/
     /*appel de la fonction pour vérifier si le jeu est fini et recommence au premier while*/
   }
-  current.cursong = MLV_load_music("ressources/game_over.wav");
-  MLV_play_music(current.cursong,1.0,1);
+  if(current.jeu.sound == 1){
+    MLV_stop_music();
+    current.cursong = MLV_load_music("ressources/game_over.wav");
+    MLV_play_music(current.cursong,1.0,1);
+  }
   MLV_change_frame_rate(NB_LINES*NB_COLS/14);
   for(i=NB_LINES-1;i>=0;i--){
     if(i%2 == 0){
