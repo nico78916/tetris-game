@@ -135,24 +135,6 @@ void on_click_opts(screen* current,int h){
     }
 }
 
-void on_click_ng(screen* current,int h){
-   printf("update.c    on_click_ng\n");
-    switch (h)
-    {
-    case 4:
-        gen_screen(current,MENU);
-        break;
-    case 0:
-        current->jeu = init_game(current->jeu);
-        gen_screen(current,GAME);
-        gen_screen(current,current->last_screen_id);
-        break;
-    default:
-        gen_screen(current,MENU);
-        break;
-    }
-}
-
 /*clique dans le menu des chargements*/
 void on_click_load(screen* current,int h){
    printf("update.c    on_click_ng\n");
