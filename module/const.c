@@ -18,16 +18,3 @@ int resolution_16_9_l[NB_RESOLUTION] = {
     720,
     576
 };
-
-const char* convertions[10] = {
-    "#000000",
-    "#FF0000",
-    "#00FF00",
-    "#0000FF",
-    "#FFFF00",
-    "#FF00FF",
-    "#00FFFF",
-    "#99FFFF",
-    "#9999FF",
-    "#FFFFFF",
-};
