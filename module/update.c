@@ -6,7 +6,6 @@
 #include "../header/save.h"
 #include "../header/game.h"
 
-/*fonction pour quitter le jeu*/
 void quit_game(screen* current){
     print("Quitting the game");
     MLV_free_font(default_font);
@@ -22,7 +21,6 @@ void quit_game(screen* current){
     exit(0);
 }
 
-/*fonction pour generer l'ecran*/
 void gen_screen(screen *current,screen_id id){
     current->last_screen_id = current->id;
     current->id = id;
@@ -30,7 +28,7 @@ void gen_screen(screen *current,screen_id id){
     {
     case MENU:
         MLV_stop_music();
-        current->cursong = MLV_load_music("title.wav");
+        current->cursong = MLV_load_music("ressources/title.wav");
         MLV_play_music(current->cursong,1.0,-1);
         *current = gen_menu(*current);
         break;
@@ -40,9 +38,6 @@ void gen_screen(screen *current,screen_id id){
     case GAME:
         MLV_stop_music();
         *current = gen_game(*current);
-    break;
-    case NEWGAME:
-        *current = gen_newgame(*current);
     break;
     case LOAD:
         *current = gen_load(*current);
@@ -67,12 +62,10 @@ void gen_screen(screen *current,screen_id id){
 
 }
 
-/*retour au menu*/
 void return_menu(screen* current){
     gen_screen(current,MENU);
 }
 
-/*clique dans le menu*/
 void on_click_menu(screen* current,int h){
    printf("update.c    on_click_menu\n");
     switch (h)
@@ -105,7 +98,6 @@ void on_click_menu(screen* current,int h){
     }
 }
 
-/*clique dans le menu option*/
 void on_click_opts(screen* current,int h){
    printf("update.c    on_click_opts\n");
     switch (h)
@@ -135,25 +127,6 @@ void on_click_opts(screen* current,int h){
     }
 }
 
-void on_click_ng(screen* current,int h){
-   printf("update.c    on_click_ng\n");
-    switch (h)
-    {
-    case 4:
-        gen_screen(current,MENU);
-        break;
-    case 0:
-        current->jeu = init_game(current->jeu);
-        gen_screen(current,GAME);
-        gen_screen(current,current->last_screen_id);
-        break;
-    default:
-        gen_screen(current,MENU);
-        break;
-    }
-}
-
-/*clique dans le menu des chargements*/
 void on_click_load(screen* current,int h){
    printf("update.c    on_click_ng\n");
     switch (h)
@@ -207,7 +180,6 @@ void on_click_over(screen* current,int h){
     }
 }
 
-/*clique dans le menu pause*/
 void on_click_pause(screen* current,int h){
    printf("update.c    on_click_ng\n");
     switch (h)
@@ -255,9 +227,6 @@ void on_click(screen* current,int h){
     case OPTIONS:
         on_click_opts(current,h);
         break;
-    case NEWGAME:
-        on_click_ng(current,h);
-        break;
     case LOAD:
         on_click_load(current,h);
         break;
@@ -274,7 +243,6 @@ void on_click(screen* current,int h){
     }
 }
 
-/*initialise le generateur d'aleatoire*/
 void update_seconde(){
     srand(time(NULL));
     return;
