@@ -12,4 +12,3 @@ int int_indexOf(int query,int table[],int c){
     }
     return -1;
 }
-/* simple test */
